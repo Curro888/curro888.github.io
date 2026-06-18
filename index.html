@@ -42,6 +42,17 @@
         body.dark-mode .is-free { background: #4a2828; color: #fca5a5; }
         body.dark-mode .is-work { background: #2a3245; color: #a8b8cc; }
         .is-festivo { background: #ef4444 !important; color: #000 !important; font-weight: 700; }
+        .d-cell { position: relative; }
+        .d-cell.tiene-nota::after {
+            content: '';
+            position: absolute;
+            top: 2px; right: 2px;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #06b6d4;
+            border: 1.5px solid white;
+        }
+        body.dark-mode .d-cell.tiene-nota::after { border-color: #1a1a2e; }
         .is-festivo-libre { background: #ef4444 !important; color: #fff !important; font-weight: 700; }
         body.dark-mode .is-festivo { background: #dc2626 !important; color: #000 !important; }
         body.dark-mode .is-festivo-libre { background: #dc2626 !important; color: #fff !important; }
@@ -396,6 +407,19 @@
     </div>
 </div>
 
+<div id="nota-modal">
+    <div class="modal-box">
+        <h3 style="margin:0; color:var(--primary-dark);">📝 Mi nota</h3>
+        <p id="nota-info" style="font-size:0.8rem; color:#64748b; margin:10px 0;"></p>
+        <textarea id="nota-input" maxlength="250" placeholder="Escribe tu anotación..." oninput="document.getElementById('nota-contador').innerText = this.value.length + ' / 250'" style="width:100%; min-height:110px; padding:10px; border:1px solid var(--border); border-radius:10px; font-size:0.9rem; background:var(--surface); color:var(--text); box-sizing:border-box; resize:vertical; font-family:inherit;"></textarea>
+        <div id="nota-contador" style="text-align:right; font-size:0.72rem; color:#64748b; margin:4px 0 10px;">0 / 250</div>
+        <div style="display:flex; gap:10px;">
+            <button onclick="cerrarNotaModal()" style="flex:1; padding:12px; background:#f5f3ff; border:none; border-radius:10px; font-weight:bold; color:var(--primary);">Cancelar</button>
+            <button onclick="guardarNota()" style="flex:1; padding:12px; background:#06b6d4; color:white; border:none; border-radius:10px; font-weight:bold;">Guardar</button>
+        </div>
+    </div>
+</div>
+
 <div id="m-cal" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.9); z-index:100; overflow-y:auto; padding-top:env(safe-area-inset-top);">
     <div style="background:var(--surface); width:95%; max-width:1200px; margin:20px auto; border-radius:20px; padding:15px; position:relative;" id="m-cal-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -415,6 +439,7 @@
             <div class="legend-item" onclick="mostrarInformeLeyenda('b-vac','Vacaciones')"><div class="legend-box b-vac"></div><span>Vacaciones</span></div>
             <div class="legend-item" onclick="mostrarInformeLeyenda('b-pend','Pendientes')"><div class="legend-box b-pend"></div><span>Pendiente</span></div>
             <div class="legend-item" onclick="mostrarInformeLeyenda('b-generado','Generados')"><div class="legend-box b-generado"></div><span>Generado</span></div>
+            <div class="legend-item"><div style="width:18px;height:18px;border-radius:50%;background:#06b6d4;border:2px solid white;"></div><span>📝 Nota</span></div>
         </div>
         <div class="cal-grid" id="m-grid"></div>
     </div>
@@ -968,7 +993,7 @@
         }
         iniciarListeners();
         renderList();
-        if (modoGrupo) { iniciarPresencia(); iniciarListenerLeidos(); }
+        if (modoGrupo) { iniciarPresencia(); iniciarListenerLeidos(); iniciarListenerNotas(miID); }
         _checkFestivos();
     }
 
@@ -1837,7 +1862,7 @@
         const p = equipo.find(x => x.id === uid);
         if (!p) return { esLibreReal: false, data: null };
         const data = (dbCambios[uid] && dbCambios[uid][`${mIdx}_${d}`]) ? dbCambios[uid][`${mIdx}_${d}`] : null;
-        const tabla = (p.t === '80/20') ? gruposLibres8020 : gruposLibres;
+        const tabla = (p.t === '80/20') ? gruposLibres8020 : (p.t === '80/20MT') ? gruposLibres8020MT : (p.t === '73/27MT') ? gruposLibres7327MT : gruposLibres;
         const libreBase = (tabla[p.g] && tabla[p.g][mIdx]?.includes(d));
         let esLibreReal = libreBase;
         if (data) {
@@ -1967,6 +1992,7 @@
                 if (data) clase += " " + data.clase;
                 // Festivo: rojo fondo, negro si trabaja, blanco si libra
                 if (_esFestivo(d, mIdx + 1, _calAnio)) clase = esLibreReal ? "is-festivo-libre" : "is-festivo";
+                if (_calAnio === _anioActual && dbNotas[uid]?.[`${mIdx}_${d}`]) clase += " tiene-nota";
                 let forma = esLibreReal ? 'shape-square' : 'shape-circle';
                 if (_calAnio === _anioActual) {
                     html += `<div class="d-cell ${clase} ${forma}"
@@ -2107,6 +2133,7 @@
             'vacaciones': () => abrirVacModal(),
             'comp': () => prepararCambio('COMP'),
             'auto': () => _abrirModalCambioPropio(),
+            'nota': () => abrirNotaModal(),
             'borrar': () => borrarCambio()
         };
 
@@ -2119,6 +2146,7 @@
             { label: '🌴 Vacaciones', color: 'var(--success)', key: 'vacaciones' },
             { label: '🤝 Cambio con Compañero', color: 'var(--text)', key: 'comp' },
             { label: '🔄 Cambio Propio', color: 'var(--text)', key: 'auto' },
+            { label: '📝 Mis Notas', color: '#06b6d4', key: 'nota' },
             { label: '❌ Borrar', color: 'red', key: 'borrar' }
         ];
         opts.forEach(o => {
@@ -2569,6 +2597,43 @@
     }
 
     function cerrarDesplegables() { document.getElementById('ctx-menu').style.display = 'none'; }
+
+    // ===== MIS NOTAS =====
+    let dbNotas = {}; // cache local: dbNotas[uid][mIdx_d] = { texto, ts }
+
+    function abrirNotaModal() {
+        cerrarDesplegables();
+        const { d, mIdx, uid } = diaSeleccionado;
+        const mesesCortos = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        document.getElementById('nota-info').innerText = d + ' ' + mesesCortos[mIdx];
+        const existente = dbNotas[uid]?.[`${mIdx}_${d}`];
+        const txt = existente ? existente.texto : '';
+        document.getElementById('nota-input').value = txt;
+        document.getElementById('nota-contador').innerText = txt.length + ' / 250';
+        document.getElementById('nota-modal').style.display = 'flex'; _onModalOpen();
+    }
+    function cerrarNotaModal() { document.getElementById('nota-modal').style.display = 'none'; }
+
+    function guardarNota() {
+        const { d, mIdx, uid } = diaSeleccionado;
+        const texto = document.getElementById('nota-input').value.trim().slice(0, 250);
+        if (!texto) { alert('Escribe alguna anotación antes de guardar.'); return; }
+        db.ref(`notas/${uid}/${mIdx}_${d}`).set({ texto, ts: Date.now(), fecha: d + '/' + (mIdx + 1) }).then(function() {
+            cerrarNotaModal();
+        });
+    }
+
+    function borrarNota(uid, mIdx, d) {
+        db.ref(`notas/${uid}/${mIdx}_${d}`).remove();
+    }
+
+    function iniciarListenerNotas(uid) {
+        db.ref('notas/' + uid).on('value', function(snap) {
+            dbNotas[uid] = snap.val() || {};
+            if (typeof renderList === 'function') renderList();
+        });
+    }
+
     function cerrarDiaModal() {
         document.getElementById('dia-modal').style.display = 'none';
     }
@@ -3129,15 +3194,21 @@
             var bf = document.getElementById('badge-festivo');
             if (bf) { bf.style.display = c.festivo > 0 ? 'block' : 'none'; bf.textContent = c.festivo; }
         });
+        db.ref('notas/' + miID).once('value').then(function(snap) {
+            var n = Object.keys(snap.val() || {}).length;
+            var bn = document.getElementById('badge-notas');
+            if (bn) { bn.style.display = n > 0 ? 'block' : 'none'; bn.textContent = n; }
+        });
     }
 
     var _hmListener = null;
 
     function abrirCategoria(cat) {
         _hmCat = cat;
-        var titulos = { generado:'\u2728 Generado', pendiente:'\u23f3 Pendiente', comp:'Con companero', propio:'Cambio propio' };
+        var titulos = { generado:'\u2728 Generado', pendiente:'\u23f3 Pendiente', comp:'Con companero', propio:'Cambio propio', notas:'\ud83d\udcdd Mis Notas' };
         document.getElementById('hm-titulo').textContent = titulos[cat] || cat;
         document.getElementById('hm-form-wrap').style.display = 'none';
+        document.getElementById('hm-btn-add').style.display = (cat === 'notas') ? 'none' : 'inline-block';
         _hmIr('detalle');
         _hmPush('detalle');
         if (_hmListener) { _hmListener.off(); _hmListener = null; }
@@ -3176,6 +3247,30 @@
     function _hmCargar(cat) {
         var cont = document.getElementById('hm-items');
         cont.innerHTML = '<div style="text-align:center;color:#64748b;padding:20px;">Cargando...</div>';
+
+        if (cat === 'notas') {
+            db.ref('notas/' + miID).once('value').then(function(snap) {
+                var items = Object.entries(snap.val() || {});
+                items.sort(function(a,b) { return (b[1].ts||0)-(a[1].ts||0); });
+                if (!items.length) { cont.innerHTML='<div style="text-align:center;color:#64748b;padding:20px;">Sin notas aún. Mantén pulsado un día del calendario y elige 📝 Mis Notas.</div>'; return; }
+                cont.innerHTML = items.map(function(item) {
+                    var k = item[0], h = item[1];
+                    var fecha = h.ts ? new Date(h.ts).toLocaleDateString('es',{day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+                    var path = 'notas/' + miID + '/' + k;
+                    return '<div style="border:1px solid #06b6d4;border-radius:12px;padding:14px;margin-bottom:10px;background:#ecfeff;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+                            '<div><div style="font-weight:800;color:#0e7490;">📝 '+(h.fecha||'—')+'</div><div style="font-size:0.72rem;color:#0e7490;opacity:0.7;">'+fecha+'</div></div>' +
+                            '<div style="display:flex;gap:4px;">' +
+                                '<button data-key="'+k+'" onclick="_hmEditNota(this)" style="background:#cffafe;color:#0e7490;border:none;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;">✏️</button>' +
+                                '<button data-path="'+path+'" onclick="_hmDelNota(this)" style="background:#fee2e2;color:#ef4444;border:none;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;">🗑️</button>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div style="font-size:0.85rem;color:#155e75;white-space:pre-wrap;">'+(h.texto||'')+'</div>' +
+                    '</div>';
+                }).join('');
+            });
+            return;
+        }
 
         if (cat === 'comp') {
             db.ref('historial2/' + miID).once('value').then(function(snap) {
@@ -3316,6 +3411,25 @@
                         (h.nota?'<div style="font-size:0.78rem;color:'+eActual.color+';margin-top:4px;">'+h.nota+'</div>':'')+
                     '</div>';
             }
+        });
+    }
+
+    function _hmDelNota(btn) {
+        if (!confirm('¿Borrar esta nota?')) return;
+        var path = btn.dataset.path;
+        db.ref(path).remove().then(function() { _hmCargar('notas'); });
+    }
+
+    function _hmEditNota(btn) {
+        var k = btn.dataset.key;
+        db.ref('notas/' + miID + '/' + k).once('value').then(function(snap) {
+            var h = snap.val();
+            if (!h) return;
+            var nuevoTexto = prompt('Editar nota (máx 250 caracteres):', h.texto || '');
+            if (nuevoTexto === null) return;
+            nuevoTexto = nuevoTexto.trim().slice(0, 250);
+            if (!nuevoTexto) { alert('La nota no puede estar vacía.'); return; }
+            db.ref('notas/' + miID + '/' + k).update({ texto: nuevoTexto }).then(function() { _hmCargar('notas'); });
         });
     }
 
@@ -3799,6 +3913,12 @@
                     <div style="font-size:0.72rem; color:var(--danger); opacity:0.7; margin-top:3px;">Tus permutas</div>
                     <div id="badge-propio" style="display:none; position:absolute; top:8px; right:10px; background:var(--danger); color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                 </div>
+                <div onclick="abrirCategoria('notas')" style="border:2px solid #06b6d4; background:#ecfeff; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
+                    <div style="font-size:1.8rem; margin-bottom:6px;">📝</div>
+                    <div style="font-weight:800; color:#0e7490;">Mis Notas</div>
+                    <div style="font-size:0.72rem; color:#0e7490; opacity:0.7; margin-top:3px;">Anotaciones</div>
+                    <div id="badge-notas" style="display:none; position:absolute; top:8px; right:10px; background:#06b6d4; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
+                </div>
             </div>
             <button onclick="cerrarHistorial()" style="width:100%; padding:12px; background:#f5f3ff; border:none; border-radius:12px; font-weight:bold; color:var(--primary-dark);">Cerrar</button>
         </div>
@@ -3810,7 +3930,7 @@
                     <button onclick="hmVolverPortada()" style="background:#f5f3ff; color:var(--primary-dark); border:none; border-radius:8px; padding:7px 12px; font-weight:800;">← Atrás</button>
                     <span id="hm-titulo" style="font-weight:800; color:var(--primary-dark); font-size:0.95rem;"></span>
                 </div>
-                <button onclick="hmMostrarForm()" style="background:var(--primary); color:white; border:none; border-radius:8px; padding:7px 13px; font-weight:700;">➕</button>
+                <button id="hm-btn-add" onclick="hmMostrarForm()" style="background:var(--primary); color:white; border:none; border-radius:8px; padding:7px 13px; font-weight:700;">➕</button>
             </div>
             <div id="hm-form-wrap" style="display:none; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px;">
                 <div id="hm-form-generado" style="display:none;">
@@ -3907,6 +4027,7 @@ const _modalCierres = [
     { id: 'confirm-modal',    fn: () => document.getElementById('confirm-modal').style.display = 'none' },
     { id: 'pending-modal',    fn: () => document.getElementById('pending-modal').style.display = 'none' },
     { id: 'vac-modal',        fn: () => { if(typeof cerrarVacModal==='function') cerrarVacModal(); else document.getElementById('vac-modal').style.display='none'; } },
+    { id: 'nota-modal',       fn: () => { if(typeof cerrarNotaModal==='function') cerrarNotaModal(); else document.getElementById('nota-modal').style.display='none'; } },
     { id: 'report-modal',     fn: () => document.getElementById('report-modal').style.display = 'none' },
     { id: 'dia-modal',        fn: () => document.getElementById('dia-modal').style.display = 'none' },
     { id: 'side-panel',       fn: () => document.getElementById('side-panel').style.display = 'none' },
