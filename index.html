@@ -2502,6 +2502,13 @@
         const data = dbCambios[uid]?.[`${mIdx}_${d}`];
         const esVacaciones = data?.texto === 'Vacaciones';
         const esCambioComp = (data?.clase === 'b-inter' || data?.clase === 'b-cambio-libre') && data?.linkedUid;
+        const tieneNota = !!(dbNotas[uid]?.[`${mIdx}_${d}`]);
+
+        // Si el día solo tiene nota y no tiene ningún cambio, borrar solo la nota
+        if (!data && tieneNota) {
+            db.ref(`notas/${uid}/${mIdx}_${d}`).remove().then(cerrarDesplegables);
+            return;
+        }
 
         if (esCambioComp) {
             const linkedUid = data.linkedUid;
@@ -2519,6 +2526,7 @@
                     updates[`cambios/${linkedUid}/${linkedData.linkedUid === uid ? linkedKey : linkedData.linkedKey}`] = null;
                 }
                 db.ref().update(updates).then(function() {
+                    if (tieneNota) db.ref(`notas/${uid}/${mIdx}_${d}`).remove();
                     cerrarDesplegables();
                     // Borrar de historial2 por ambas fechas del cambio
                     var fecha1 = d + '/' + (mIdx+1);
@@ -2551,6 +2559,7 @@
         }
 
         db.ref(`cambios/${uid}/${mIdx}_${d}`).remove().then(function() {
+            if (tieneNota) db.ref(`notas/${uid}/${mIdx}_${d}`).remove();
             cerrarDesplegables();
             if (uid === miID) {
                 var fecha = d + '/' + (mIdx+1);
@@ -3877,7 +3886,7 @@
     </div>
 </div>
 
-<div id="historial-modal" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.85); z-index:6000; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto;">
+<div id="historial-modal" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.85); z-index:6000; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto; overscroll-behavior:contain;">
     <div style="background:var(--surface); width:100%; max-width:480px; border-radius:20px; padding:20px; margin-top:10px;">
 
         <!-- PORTADA 4 tarjetas -->
@@ -3974,7 +3983,7 @@
                     <button onclick="document.getElementById('hm-form-wrap').style.display='none'" style="flex:1; background:#f5f3ff; color:var(--primary-dark); border:none; border-radius:8px; padding:8px; font-weight:700;">Cancelar</button>
                 </div>
             </div>
-            <div id="hm-items" style="max-height:55vh; overflow-y:auto;"></div>
+            <div id="hm-items" style="max-height:55vh; overflow-y:auto; overscroll-behavior:contain;"></div>
         </div>
 
         <!-- EDITAR ENTRADA -->
