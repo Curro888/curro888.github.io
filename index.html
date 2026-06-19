@@ -415,7 +415,7 @@
         <div id="nota-contador" style="text-align:right; font-size:0.72rem; color:#64748b; margin:4px 0 10px;">0 / 250</div>
         <div style="display:flex; gap:10px;">
             <button onclick="cerrarNotaModal()" style="flex:1; padding:12px; background:#f5f3ff; border:none; border-radius:10px; font-weight:bold; color:var(--primary);">Cancelar</button>
-            <button onclick="guardarNota()" style="flex:1; padding:12px; background:#06b6d4; color:white; border:none; border-radius:10px; font-weight:bold;">Guardar</button>
+            <button onclick="guardarMiNota()" style="flex:1; padding:12px; background:#06b6d4; color:white; border:none; border-radius:10px; font-weight:bold;">Guardar</button>
         </div>
     </div>
 </div>
@@ -2614,7 +2614,7 @@
     }
     function cerrarNotaModal() { document.getElementById('nota-modal').style.display = 'none'; }
 
-    function guardarNota() {
+    function guardarMiNota() {
         const { d, mIdx, uid } = diaSeleccionado;
         const texto = document.getElementById('nota-input').value.trim().slice(0, 250);
         if (!texto) { alert('Escribe alguna anotación antes de guardar.'); return; }
