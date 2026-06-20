@@ -3659,6 +3659,8 @@
         _hmAbierto = false;
         document.getElementById('historial-modal').style.display = 'none';
         _hmCat=null; _hmPendKey=null; _hmEditKey=null; _hmNav=[];
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
     }
 
     function reproducirSonido() {
@@ -3886,7 +3888,7 @@
     </div>
 </div>
 
-<div id="historial-modal" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.85); z-index:6000; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto; overscroll-behavior:contain;">
+<div id="historial-modal" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.85); z-index:6000; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto; overscroll-behavior:contain; overscroll-behavior-y:contain;">
     <div style="background:var(--surface); width:100%; max-width:480px; border-radius:20px; padding:20px; margin-top:10px;">
 
         <!-- PORTADA 4 tarjetas -->
@@ -3983,7 +3985,7 @@
                     <button onclick="document.getElementById('hm-form-wrap').style.display='none'" style="flex:1; background:#f5f3ff; color:var(--primary-dark); border:none; border-radius:8px; padding:8px; font-weight:700;">Cancelar</button>
                 </div>
             </div>
-            <div id="hm-items" style="max-height:55vh; overflow-y:auto; overscroll-behavior:contain;"></div>
+            <div id="hm-items" style="max-height:55vh; overflow-y:auto; overscroll-behavior:contain; overscroll-behavior-y:contain; -webkit-overflow-scrolling:touch;"></div>
         </div>
 
         <!-- EDITAR ENTRADA -->
@@ -4081,6 +4083,8 @@ function _cerrarModalVisible() {
 function _onModalOpen() {
     _modalCount++;
     history.pushState({ modal: _modalCount }, '');
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
 }
 
 // Entrada base para no salir de la app cuando no hay modales
@@ -4098,6 +4102,8 @@ window.addEventListener('popstate', function(e) {
             document.getElementById('historial-modal').style.display = 'none';
             _hmCat = null; _hmPendKey = null; _hmEditKey = null; _hmNav = [];
             if (_modalCount > 0) _modalCount--;
+            document.body.style.overflow = '';
+            document.body.style.touchAction = '';
         }
         return;
     }
@@ -4109,11 +4115,15 @@ window.addEventListener('popstate', function(e) {
         if (!hayModales) {
             _modalCount = 0;
             history.pushState({ base: true }, '');
+            document.body.style.overflow = '';
+            document.body.style.touchAction = '';
         } else if (_modalCount === 0) {
             history.pushState({ base: true }, '');
         }
     } else {
         history.pushState({ base: true }, '');
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
     }
 });
 </script>
