@@ -4127,43 +4127,30 @@ window.addEventListener('popstate', function(e) {
     }
 });
 
-// Bloqueo activo del gesto "pull to refresh" / swipe-down nativo
-// CSS overscroll-behavior no es suficiente en PWA/WebView instalado
+// Bloqueo del gesto "pull to refresh" nativo de Chrome/TWA.
+// Chrome solo respeta el bloqueo si se hace en touchstart con passive:false,
+// comprobando que el scroll ya está en scrollTop=0 ANTES de que empiece el gesto.
 (function() {
-    var touchStartY = 0;
     document.addEventListener('touchstart', function(e) {
-        touchStartY = e.touches[0].clientY;
-    }, { passive: true });
+        if (e.target.closest('#ctx-menu')) return; // no tocar el menú de arrastre
 
-    document.addEventListener('touchmove', function(e) {
-        // No interferir con el menú contextual (mantener pulsado y arrastrar)
-        if (e.target.closest('#ctx-menu')) return;
-
-        var touchY = e.touches[0].clientY;
-        var deslizandoHaciaAbajo = touchY > touchStartY;
-        if (!deslizandoHaciaAbajo) return; // solo nos interesa el gesto de "tirar hacia abajo"
-
-        // Buscar el contenedor con scroll real más cercano al punto de toque
+        // Encontrar el contenedor con scroll bajo el dedo (o usar documentElement/body)
         var el = e.target;
-        var contenedorScroll = null;
+        var contenedorScroll = document.scrollingElement || document.documentElement;
         while (el && el !== document.body) {
             var style = window.getComputedStyle(el);
-            var puedeScrollear = (style.overflowY === 'auto' || style.overflowY === 'scroll') && el.scrollHeight > el.clientHeight;
-            if (puedeScrollear) { contenedorScroll = el; break; }
+            if ((style.overflowY === 'auto' || style.overflowY === 'scroll') && el.scrollHeight > el.clientHeight) {
+                contenedorScroll = el;
+                break;
+            }
             el = el.parentElement;
         }
 
-        if (contenedorScroll) {
-            // Si el contenedor con scroll está en su tope (scrollTop=0) y seguimos tirando hacia abajo,
-            // es un intento de pull-to-refresh dentro de una lista -> bloquear
-            if (contenedorScroll.scrollTop <= 0) {
-                e.preventDefault();
-            }
-        } else {
-            // No hay contenedor con scroll bajo el dedo -> es el body/fondo -> siempre bloquear pull-to-refresh
-            e.preventDefault();
+        // Si ya estamos en el tope superior del contenedor relevante, neutralizar el pull-to-refresh
+        if (contenedorScroll.scrollTop <= 0) {
+            contenedorScroll.scrollTop = 1; // truco: empuja 1px para que Chrome no detecte "scrollTop=0"
         }
-    }, { passive: false });
+    }, { passive: true });
 })();
 </script>
 <script>
