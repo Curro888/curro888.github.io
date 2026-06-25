@@ -439,6 +439,7 @@
             <div class="legend-item" onclick="mostrarInformeLeyenda('b-vac','Vacaciones')"><div class="legend-box b-vac"></div><span>Vacaciones</span></div>
             <div class="legend-item" onclick="mostrarInformeLeyenda('b-pend','Pendientes')"><div class="legend-box b-pend"></div><span>Pendiente</span></div>
             <div class="legend-item" onclick="mostrarInformeLeyenda('b-generado','Generados')"><div class="legend-box b-generado"></div><span>Generado</span></div>
+            <div class="legend-item" onclick="mostrarInformeLeyenda('b-l26','L-26')"><div class="legend-box b-l26"></div><span>L-26</span></div>
             <div class="legend-item"><div style="width:18px;height:18px;border-radius:50%;background:#06b6d4;border:2px solid white;"></div><span>📝 Nota</span></div>
         </div>
         <div class="cal-grid" id="m-grid"></div>
@@ -1028,6 +1029,9 @@
 
 
     // Función de limpieza oculta - usar desde consola: limpiarTodosFestivos()
+    window._gestionarL26 = function(btn) {
+        _abrirDecisionL26(btn.getAttribute('data-k'), btn.getAttribute('data-f'));
+    };
     window.limpiarTodosFestivos = function() {
         if (!db) { alert('Debes estar conectado'); return; }
         const fechas = ['1/1','6/1','2/4','3/4','1/5','2/5','15/5'];
@@ -1121,7 +1125,7 @@
 
     function _activarPickDia(modo, key, fecha) {
         _modoPickDia = modo;
-        if (modo === 'generado') { _pickGenKey = key; _pickGenFecha = fecha; }
+        if (modo === 'generado' || modo === 'l26') { _pickGenKey = key; _pickGenFecha = fecha; }
         else if (modo === 'convenio') { _pickPendKey = key; _pickPendFecha = fecha; }
         else { _pickPendKey = key; _pickPendFecha = fecha; }
         // Cerrar modales y abrir calendario del usuario
@@ -1140,6 +1144,16 @@
         var fecha = d + '/' + (mIdx+1);
         if (_modoPickDia === 'generado') {
             _confirmarPickGenerado(d, mIdx, fecha);
+        } else if (_modoPickDia === 'l26') {
+            db.ref('historial2/' + miID + '/' + _pickGenKey).update({
+                resuelto: { accion: 'librar', diaLibre: fecha }
+            });
+            db.ref('cambios/' + miID + '/' + mIdx + '_' + d).set({
+                texto: 'Libras (por L-26 ' + _pickGenFecha + ')',
+                clase: 'b-cambio-libre'
+            });
+            _desactivarPickDia();
+            if (typeof _hmCargar === 'function' && _hmCat === 'l26') _hmCargar('l26');
         } else if (_modoPickDia === 'convenio') {
             _confirmarPickConvenio(d, mIdx, fecha);
         } else if (_modoPickDia === 'pendiente') {
@@ -1333,7 +1347,60 @@
         if (typeof _hmCargar === 'function' && _hmCat === 'generado') _hmCargar('generado');
     }
 
-        // ===== MODAL CAMBIO PROPIO =====
+    
+    // ===== L-26 (días libres trabajados) =====
+    function _abrirModalL26() {
+        cerrarDesplegables();
+        _genDia = diaSeleccionado.d;
+        _genMes = diaSeleccionado.mIdx;
+        var fecha = _genDia + '/' + (_genMes+1);
+        // Guardar en historial2 como cat='l26'
+        var key = Date.now();
+        var updates = {};
+        updates['historial2/' + miID + '/' + key] = {
+            cat: 'l26',
+            ts: key,
+            fecha: fecha,
+            nota: 'L-26',
+            esLibre: false
+        };
+        // Marcar en el calendario
+        updates['cambios/' + miID + '/' + _genMes + '_' + _genDia] = {
+            texto: 'L-26',
+            clase: 'b-l26'
+        };
+        db.ref().update(updates).then(function() { _hmBadges(); });
+    }
+
+    function _abrirDecisionL26(key, fecha) {
+        document.getElementById('mgen-fecha').textContent = '🔶 L-26: ' + fecha;
+        document.getElementById('mgen-key').value = key;
+        document.getElementById('mgen-fecha-val').value = fecha;
+        document.getElementById('mgen-librar-wrap').style.display = 'none';
+        document.getElementById('mgen-dia-libre').value = '';
+        var lista = document.getElementById('mgen-lista');
+        if (lista) lista.innerHTML = '';
+        document.getElementById('modal-generado-decision').style.display = 'flex';
+        _onModalOpen();
+    }
+
+    function _elegirL26(opcion) {
+        var key = document.getElementById('mgen-key').value;
+        var fecha = document.getElementById('mgen-fecha-val').value;
+        if (opcion === 'cobrar') {
+            db.ref('historial2/' + miID + '/' + key).update({
+                cobrado: true,
+                resuelto: { accion: 'cobrado', fecha: new Date().toLocaleDateString('es') }
+            });
+            document.getElementById('modal-generado-decision').style.display = 'none';
+            if (typeof _hmCargar === 'function' && _hmCat === 'l26') _hmCargar('l26');
+        } else {
+            document.getElementById('modal-generado-decision').style.display = 'none';
+            _activarPickDia('l26', key, fecha);
+        }
+    }
+
+    // ===== MODAL CAMBIO PROPIO =====
     var _cpTipoPrimerDia = null;
 
     function _abrirModalCambioPropio() {
@@ -2129,6 +2196,7 @@
 
         const accionesMenu = {
             'generado': () => _abrirModalGenerado(),
+            'l26': () => _abrirModalL26(),
             'pendiente': () => _abrirModalPendiente(),
             'vacaciones': () => abrirVacModal(),
             'comp': () => prepararCambio('COMP'),
@@ -2142,6 +2210,7 @@
 
         const opts = [
             { label: '✨ ' + diaLabel + ' Generado', color: 'var(--pink)', key: 'generado' },
+            { label: '🔶 ' + diaLabel + ' L-26', color: '#f97316', key: 'l26' },
             { label: '⏳ ' + diaLabel + ' Pendiente', color: 'var(--primary)', key: 'pendiente' },
             { label: '🌴 Vacaciones', color: 'var(--success)', key: 'vacaciones' },
             { label: '🤝 Cambio con Compañero', color: 'var(--text)', key: 'comp' },
@@ -3203,6 +3272,14 @@
             var bf = document.getElementById('badge-festivo');
             if (bf) { bf.style.display = c.festivo > 0 ? 'block' : 'none'; bf.textContent = c.festivo; }
         });
+        db.ref('historial2/' + miID).once('value').then(function(snap2) {
+            var l26total = 0;
+            Object.values(snap2.val() || {}).forEach(function(h) {
+                if (h.cat === 'l26' && !h.resuelto && !h.cobrado) l26total++;
+            });
+            var bl26 = document.getElementById('badge-l26');
+            if (bl26) { bl26.style.display = l26total > 0 ? 'block' : 'none'; bl26.textContent = l26total; }
+        });
         db.ref('notas/' + miID).once('value').then(function(snap) {
             var n = Object.keys(snap.val() || {}).length;
             var bn = document.getElementById('badge-notas');
@@ -3214,7 +3291,7 @@
 
     function abrirCategoria(cat) {
         _hmCat = cat;
-        var titulos = { generado:'\u2728 Generado', pendiente:'\u23f3 Pendiente', comp:'Con companero', propio:'Cambio propio', notas:'\ud83d\udcdd Mis Notas' };
+        var titulos = { generado:'\u2728 Generado', l26:'\ud83d\udd36 L-26', pendiente:'\u23f3 Pendiente', comp:'Con companero', propio:'Cambio propio', notas:'\ud83d\udcdd Mis Notas' };
         document.getElementById('hm-titulo').textContent = titulos[cat] || cat;
         document.getElementById('hm-form-wrap').style.display = 'none';
         document.getElementById('hm-btn-add').style.display = (cat === 'notas') ? 'none' : 'inline-block';
@@ -3281,6 +3358,31 @@
             return;
         }
 
+        if (cat === 'l26') {
+            db.ref('historial2/' + miID).once('value').then(function(snap) {
+                var E = snap.val() || {};
+                var items = Object.entries(E).filter(function(e) { return e[1].cat === 'l26'; });
+                items.sort(function(a,b) { return (b[1].ts||0)-(a[1].ts||0); });
+                if (!items.length) { cont.innerHTML='<div style="text-align:center;color:#64748b;padding:20px;">Sin días L-26. Mantén pulsado un día libre y elige 🔶 L-26.</div>'; return; }
+                var renderItemL26 = function(entry) {
+                    var k=entry[0], h=entry[1];
+                    var estado = h.cobrado ? '<span style="background:#dcfce7;color:#166534;border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700;">Cobrado</span>' :
+                                 h.resuelto ? '<span style="background:#e0f2fe;color:#0369a1;border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700;">Librado '+(h.resuelto.diaLibre||'')+'</span>' :
+                                 '<span style="background:#fff7ed;color:#c2410c;border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700;">Pendiente</span>';
+                    return '<div style="border:2px solid #f97316;border-radius:12px;padding:14px;margin-bottom:10px;background:#fff7ed;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                            '<div><div style="font-weight:800;color:#c2410c;">🔶 '+h.fecha+'</div>' +
+                            '<div style="font-size:0.72rem;color:#94a3b8;margin-top:2px;">'+(h.nota||'L-26')+'</div></div>' +
+                            estado +
+                        '</div>' +
+                        (!h.resuelto && !h.cobrado ? '<button data-k="'+k+'" data-f="'+h.fecha+'" onclick="_gestionarL26(this)" style="margin-top:10px;width:100%;padding:10px;background:#f97316;color:white;border:none;border-radius:10px;font-weight:700;">Gestionar</button>' : '') +
+                    '</div>';
+                };
+                cont.innerHTML = items.map(renderItemL26).join('');
+            });
+            return;
+        }
+
         if (cat === 'comp') {
             db.ref('historial2/' + miID).once('value').then(function(snap) {
                 var items = [];
@@ -3321,7 +3423,7 @@
             var E = { generado:{borde:'#f472b6',bg:'#fdf2f8',color:'#be185d'}, pendiente:{borde:'#8b5cf6',bg:'#f5f3ff',color:'#6d28d9'}, propio:{borde:'#ef4444',bg:'#fff1f2',color:'#ef4444'} };
             var e = E[cat] || E.generado;
             cont.innerHTML = (function() {
-                if (cat !== 'generado') return items.map(renderItemGen).join('');
+                if (cat !== 'generado' && cat !== 'l26') return items.map(renderItemGen).join('');
                 var grpGen = items.filter(function(i){ return i[1].subtipo !== 'convenio' && i[1].subtipo !== 'festivo'; });
                 var grpCon = items.filter(function(i){ return i[1].subtipo === 'convenio'; });
                 var grpFes = items.filter(function(i){ return i[1].subtipo === 'festivo'; });
@@ -3445,7 +3547,7 @@
     function hmMostrarForm() {
         var w = document.getElementById('hm-form-wrap');
         w.style.display = w.style.display === 'none' ? 'block' : 'none';
-        ['generado','pendiente','comp','propio'].forEach(function(c) {
+        ['generado','l26','pendiente','comp','propio'].forEach(function(c) {
             document.getElementById('hm-form-'+c).style.display = c === _hmCat ? 'block' : 'none';
         });
         // Resetear subtipo a 'generado' cada vez que se abre el form
@@ -3917,6 +4019,12 @@
                     <div style="font-weight:800; color:#854d0e;">Con compañero</div>
                     <div style="font-size:0.72rem; color:#854d0e; opacity:0.7; margin-top:3px;">Cambios acordados</div>
                     <div id="badge-comp" style="display:none; position:absolute; top:8px; right:10px; background:var(--yellow); color:#854d0e; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
+                </div>
+                <div onclick="abrirCategoria('l26')" style="border:2px solid #f97316; background:#fff7ed; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
+                    <div style="font-size:1.8rem; margin-bottom:6px;">🔶</div>
+                    <div style="font-weight:800; color:#c2410c;">L-26</div>
+                    <div style="font-size:0.72rem; color:#c2410c; opacity:0.7; margin-top:3px;">Libres trabajados</div>
+                    <div id="badge-l26" style="display:none; position:absolute; top:8px; right:10px; background:#f97316; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                 </div>
                 <div onclick="abrirCategoria('propio')" style="border:2px solid var(--danger); background:#fff1f2; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
                     <div style="font-size:1.8rem; margin-bottom:6px;">🔄</div>
