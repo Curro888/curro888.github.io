@@ -1029,6 +1029,19 @@
 
 
     // Función de limpieza oculta - usar desde consola: limpiarTodosFestivos()
+    window._borrarItemGen = function(btn) {
+        if (!confirm('¿Borrar este registro y su marca del calendario?')) return;
+        var key = btn.getAttribute('data-gk');
+        var mIdx = btn.getAttribute('data-gmIdx');
+        var d = btn.getAttribute('data-gd');
+        var updates = {};
+        updates['historial2/' + miID + '/' + key] = null;
+        if (mIdx !== '' && d !== '') updates['cambios/' + miID + '/' + mIdx + '_' + d] = null;
+        db.ref().update(updates).then(function() {
+            _hmBadges();
+            if (typeof _hmCargar === 'function') _hmCargar(_hmCat);
+        });
+    };
     window._gestionarL26 = function(btn) {
         _abrirDecisionL26(btn.getAttribute('data-k'), btn.getAttribute('data-f'));
     };
@@ -1937,7 +1950,7 @@
             const t = data.texto || '';
             if (c === 'b-cambio-libre' || c === 'b-vac') {
                 esLibreReal = true;
-            } else if (c === 'b-inter' || c === 'b-pend' || c === 'b-generado') {
+            } else if (c === 'b-inter' || c === 'b-pend' || c === 'b-generado' || c === 'b-l26') {
                 esLibreReal = false;
             } else if (t.includes('Libras')) {
                 esLibreReal = true;
@@ -3245,7 +3258,7 @@
 
     function _hmBadges() {
         db.ref('historial2/' + miID).once('value').then(function(snap) {
-            var c = { generado:0, convenio:0, festivo:0, pendiente:0, comp:0, propio:0 };
+            var c = { generado:0, l26:0, convenio:0, festivo:0, pendiente:0, comp:0, propio:0 };
             Object.values(snap.val() || {}).forEach(function(h) {
                 if (h.cat === 'generado') {
                     if (!h.resuelto && !h.cobrado) {
@@ -3253,6 +3266,10 @@
                         else if (h.subtipo === 'festivo') c.festivo++;
                         else c.generado++;
                     }
+                    return;
+                }
+                if (h.cat === 'l26') {
+                    if (!h.resuelto && !h.cobrado) c.generado++; // sumar al badge de generado
                     return;
                 }
                 if (h.cat === 'pendiente') {
@@ -3423,7 +3440,8 @@
             var E = { generado:{borde:'#f472b6',bg:'#fdf2f8',color:'#be185d'}, pendiente:{borde:'#8b5cf6',bg:'#f5f3ff',color:'#6d28d9'}, propio:{borde:'#ef4444',bg:'#fff1f2',color:'#ef4444'} };
             var e = E[cat] || E.generado;
             cont.innerHTML = (function() {
-                if (cat !== 'generado' && cat !== 'l26') return items.map(renderItemGen).join('');
+                // Incluir tanto 'generado' como 'l26' en la tarjeta Generados
+                if (cat !== 'generado') return items.map(renderItemGen).join('');
                 var grpGen = items.filter(function(i){ return i[1].subtipo !== 'convenio' && i[1].subtipo !== 'festivo'; });
                 var grpCon = items.filter(function(i){ return i[1].subtipo === 'convenio'; });
                 var grpFes = items.filter(function(i){ return i[1].subtipo === 'festivo'; });
@@ -4019,12 +4037,6 @@
                     <div style="font-weight:800; color:#854d0e;">Con compañero</div>
                     <div style="font-size:0.72rem; color:#854d0e; opacity:0.7; margin-top:3px;">Cambios acordados</div>
                     <div id="badge-comp" style="display:none; position:absolute; top:8px; right:10px; background:var(--yellow); color:#854d0e; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
-                </div>
-                <div onclick="abrirCategoria('l26')" style="border:2px solid #f97316; background:#fff7ed; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
-                    <div style="font-size:1.8rem; margin-bottom:6px;">🔶</div>
-                    <div style="font-weight:800; color:#c2410c;">L-26</div>
-                    <div style="font-size:0.72rem; color:#c2410c; opacity:0.7; margin-top:3px;">Libres trabajados</div>
-                    <div id="badge-l26" style="display:none; position:absolute; top:8px; right:10px; background:#f97316; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                 </div>
                 <div onclick="abrirCategoria('propio')" style="border:2px solid var(--danger); background:#fff1f2; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
                     <div style="font-size:1.8rem; margin-bottom:6px;">🔄</div>
