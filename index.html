@@ -2086,10 +2086,13 @@
                 let clase = esLibreReal ? "is-free" : "is-work";
                 if ((start + d - 1) % 7 === 6) clase += " is-sun";
                 if (data) clase += " " + data.clase;
+                // b-l26: día libre que se trabaja -> mostrar como trabajo (círculo)
+                const esL26 = data?.clase === 'b-l26';
+                if (esL26) { clase = "is-work b-l26"; }
                 // Festivo: rojo fondo, negro si trabaja, blanco si libra
                 if (_esFestivo(d, mIdx + 1, _calAnio)) clase = esLibreReal ? "is-festivo-libre" : "is-festivo";
                 if (_calAnio === _anioActual && dbNotas[uid]?.[`${mIdx}_${d}`]) clase += " tiene-nota";
-                let forma = esLibreReal ? 'shape-square' : 'shape-circle';
+                let forma = (esLibreReal && !esL26) ? 'shape-square' : 'shape-circle';
                 if (_calAnio === _anioActual) {
                     html += `<div class="d-cell ${clase} ${forma}"
                         onclick="handleDayClick(${d},${mIdx},'${uid}')"
@@ -2554,19 +2557,21 @@
 
     function _hmQuitarResolucionL26(fechaLibre) {
         db.ref('historial2/' + miID).once('value').then(function(snap) {
+            var encontrado = false;
             snap.forEach(function(child) {
                 var h = child.val();
-                if (h && h.cat === 'l26' && h.resuelto &&
-                    h.resuelto.diaLibre === fechaLibre) {
-                    db.ref('historial2/' + miID + '/' + child.key + '/resuelto').set(null).then(function() {
+                if (h && h.cat === 'l26' && h.resuelto && h.resuelto.diaLibre === fechaLibre) {
+                    encontrado = true;
+                    db.ref('historial2/' + miID + '/' + child.key + '/resuelto').remove().then(function() {
                         _hmBadges();
-                        // Si la tarjeta generado está abierta, recargarla
-                        if (typeof _hmCargar === 'function' && (_hmCat === 'generado' || _hmCat === 'l26')) {
+                        // Recargar tarjeta si el historial está abierto
+                        if (document.getElementById('historial-modal').style.display !== 'none') {
                             _hmCargar('generado');
                         }
                     });
                 }
             });
+            if (!encontrado) _hmBadges();
         });
     }
 
