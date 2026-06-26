@@ -1158,15 +1158,20 @@
         if (_modoPickDia === 'generado') {
             _confirmarPickGenerado(d, mIdx, fecha);
         } else if (_modoPickDia === 'l26') {
-            db.ref('historial2/' + miID + '/' + _pickGenKey).update({
-                resuelto: { accion: 'librar', diaLibre: fecha }
-            });
             db.ref('cambios/' + miID + '/' + mIdx + '_' + d).set({
                 texto: 'Libras (por L-26 ' + _pickGenFecha + ')',
                 clase: 'b-cambio-libre'
+            }).then(function() {
+                db.ref('historial2/' + miID + '/' + _pickGenKey).update({
+                    resuelto: { accion: 'librar', diaLibre: fecha }
+                });
             });
             _desactivarPickDia();
-            if (typeof _hmCargar === 'function' && _hmCat === 'l26') _hmCargar('l26');
+            cerrarCalendario();
+            setTimeout(function() {
+                abrirHistorial();
+                abrirCategoria('generado');
+            }, 300);
         } else if (_modoPickDia === 'convenio') {
             _confirmarPickConvenio(d, mIdx, fecha);
         } else if (_modoPickDia === 'pendiente') {
@@ -1383,6 +1388,9 @@
             clase: 'b-l26'
         };
         db.ref().update(updates).then(function() {
+            // Actualizar dbCambios localmente sin esperar al listener
+            if (!dbCambios[miID]) dbCambios[miID] = {};
+            dbCambios[miID][_genMes + '_' + _genDia] = { texto: 'L-26', clase: 'b-l26' };
             _hmBadges();
             if (idCalendarioAbierto) _renderCalAnio(idCalendarioAbierto);
             else if (_calModoGrupo && _calGrupoActivo) _renderCalGrupoAnio(_calGrupoActivo, _calTurnoActivo);
@@ -2540,6 +2548,34 @@
         });
     }
 
+    function _hmQuitarResolucionL26(fechaLibre) {
+        // Al borrar un dia libre que resolvía un L-26:
+        // quitar solo la resolución, el L-26 queda disponible para volver a gestionar
+        db.ref('historial2/' + miID).once('value').then(function(snap) {
+            snap.forEach(function(child) {
+                var h = child.val();
+                if (h && h.cat === 'l26' && h.resuelto &&
+                    h.resuelto.diaLibre === fechaLibre) {
+                    db.ref('historial2/' + miID + '/' + child.key + '/resuelto').set(null);
+                    _hmBadges();
+                }
+            });
+        });
+    }
+
+    function _hmBorrarL26PorFecha(fecha) {
+        // Al borrar la marca L-26 del calendario, borrar también del historial
+        db.ref('historial2/' + miID).once('value').then(function(snap) {
+            snap.forEach(function(child) {
+                var h = child.val();
+                if (h && h.cat === 'l26' && h.fecha === fecha) {
+                    db.ref('historial2/' + miID + '/' + child.key).remove();
+                    _hmBadges();
+                }
+            });
+        });
+    }
+
     function _hmQuitarResolucionPendiente(fechaLibre) {
         // Al borrar un dia libre que resolvía un pendiente:
         // quitar solo la resolución, mantener el pendiente disponible
@@ -2656,6 +2692,11 @@
                     _hmQuitarResolucionConvenio(fecha);
                 } else if (texto.includes('Libras (por generado)')) {
                     _hmQuitarResolucionGenerado(fecha);
+                } else if (texto.includes('Libras (por L-26')) {
+                    _hmQuitarResolucionL26(fecha);
+                } else if (texto === 'L-26') {
+                    // Borrar el L-26 del historial directamente
+                    _hmBorrarL26PorFecha(fecha);
                 } else if (texto.includes('Haces (x ') && data && data.linkedUid) {
                     // Cambio con compañero
                     _hmBorrarCambioComp(fecha, data.linkedKey);
@@ -3273,7 +3314,7 @@
                     return;
                 }
                 if (h.cat === 'l26') {
-                    if (!h.resuelto && !h.cobrado) c.generado++; // sumar al badge de generado
+                    if (!h.resuelto && !h.cobrado) c.l26++; // contador separado
                     return;
                 }
                 if (h.cat === 'pendiente') {
@@ -3282,7 +3323,7 @@
                 }
                 if (c[h.cat] !== undefined) c[h.cat]++;
             });
-            ['generado','pendiente','comp','propio'].forEach(function(cat) {
+            ['generado','l26','pendiente','comp','propio'].forEach(function(cat) {
                 var b = document.getElementById('badge-' + cat);
                 if (!b) return;
                 b.style.display = c[cat] > 0 ? 'block' : 'none';
@@ -3292,14 +3333,6 @@
             if (bc) { bc.style.display = c.convenio > 0 ? 'block' : 'none'; bc.textContent = c.convenio; }
             var bf = document.getElementById('badge-festivo');
             if (bf) { bf.style.display = c.festivo > 0 ? 'block' : 'none'; bf.textContent = c.festivo; }
-        });
-        db.ref('historial2/' + miID).once('value').then(function(snap2) {
-            var l26total = 0;
-            Object.values(snap2.val() || {}).forEach(function(h) {
-                if (h.cat === 'l26' && !h.resuelto && !h.cobrado) l26total++;
-            });
-            var bl26 = document.getElementById('badge-l26');
-            if (bl26) { bl26.style.display = l26total > 0 ? 'block' : 'none'; bl26.textContent = l26total; }
         });
         db.ref('notas/' + miID).once('value').then(function(snap) {
             var n = Object.keys(snap.val() || {}).length;
@@ -4050,6 +4083,7 @@
                     <div id="badge-generado" style="display:none; position:absolute; top:8px; right:10px; background:var(--pink); color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                     <div id="badge-convenio" style="display:none; position:absolute; top:8px; left:10px; background:#f59e0b; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                     <div id="badge-festivo" style="display:none; position:absolute; bottom:8px; right:10px; background:#3b82f6; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
+                    <div id="badge-l26" style="display:none; position:absolute; bottom:8px; left:10px; background:#f97316; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                 </div>
                 <div onclick="abrirCategoria('pendiente')" style="border:2px solid var(--primary); background:#f5f3ff; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
                     <div style="font-size:1.8rem; margin-bottom:6px;">⏳</div>
