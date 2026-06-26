@@ -1392,12 +1392,12 @@
             if (!dbCambios[miID]) dbCambios[miID] = {};
             dbCambios[miID][_genMes + '_' + _genDia] = { texto: 'L-26', clase: 'b-l26' };
             _hmBadges();
-            // Re-renderizar el calendario con miID directamente
-            if (document.getElementById('m-cal').style.display !== 'none') {
-                if (idCalendarioAbierto) _renderCalAnio(idCalendarioAbierto);
-                else _renderCalAnio(miID);
-            }
-            if (_calModoGrupo && _calGrupoActivo) _renderCalGrupoAnio(_calGrupoActivo, _calTurnoActivo);
+            // Re-renderizar según el modo activo
+            var calVisible = document.getElementById('m-cal').style.display !== 'none';
+            if (calVisible && idCalendarioAbierto) _renderCalAnio(idCalendarioAbierto);
+            else if (calVisible) _renderCalAnio(miID);
+            else if (_calModoGrupo && _calGrupoActivo) _renderCalGrupoAnio(_calGrupoActivo, _calTurnoActivo);
+            else renderList(); // modo individual: actualiza las tarjetas del panel principal
         });
     }
 
@@ -2553,15 +2553,18 @@
     }
 
     function _hmQuitarResolucionL26(fechaLibre) {
-        // Al borrar un dia libre que resolvía un L-26:
-        // quitar solo la resolución, el L-26 queda disponible para volver a gestionar
         db.ref('historial2/' + miID).once('value').then(function(snap) {
             snap.forEach(function(child) {
                 var h = child.val();
                 if (h && h.cat === 'l26' && h.resuelto &&
                     h.resuelto.diaLibre === fechaLibre) {
-                    db.ref('historial2/' + miID + '/' + child.key + '/resuelto').set(null);
-                    _hmBadges();
+                    db.ref('historial2/' + miID + '/' + child.key + '/resuelto').set(null).then(function() {
+                        _hmBadges();
+                        // Si la tarjeta generado está abierta, recargarla
+                        if (typeof _hmCargar === 'function' && (_hmCat === 'generado' || _hmCat === 'l26')) {
+                            _hmCargar('generado');
+                        }
+                    });
                 }
             });
         });
