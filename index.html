@@ -1382,7 +1382,11 @@
             texto: 'L-26',
             clase: 'b-l26'
         };
-        db.ref().update(updates).then(function() { _hmBadges(); });
+        db.ref().update(updates).then(function() {
+            _hmBadges();
+            if (idCalendarioAbierto) _renderCalAnio(idCalendarioAbierto);
+            else if (_calModoGrupo && _calGrupoActivo) _renderCalGrupoAnio(_calGrupoActivo, _calTurnoActivo);
+        });
     }
 
     function _abrirDecisionL26(key, fecha) {
@@ -3431,9 +3435,9 @@
         db.ref('historial2/' + miID).once('value').then(function(snap) {
             var items = Object.entries(snap.val()||{}).filter(function(e) {
                 var h = e[1];
+                // Para la tarjeta generado incluir también los l26
+                if (cat === 'generado') return h.cat === 'generado' || h.cat === 'l26';
                 if (h.cat !== cat) return false;
-                // Pendientes: mostrar todos (resueltos con etiqueta, no resueltos con boton)
-                // Generados: mostrar todos (cobrados con etiqueta, disponibles con boton Decidir)
                 return true;
             }).sort(function(a,b){ return (b[1].ts||0)-(a[1].ts||0); });
             if (!items.length) { cont.innerHTML='<div style="text-align:center;color:#64748b;padding:20px;">Sin entradas a\u00fan. Pulsa \u2795</div>'; return; }
@@ -3442,9 +3446,10 @@
             cont.innerHTML = (function() {
                 // Incluir tanto 'generado' como 'l26' en la tarjeta Generados
                 if (cat !== 'generado') return items.map(renderItemGen).join('');
-                var grpGen = items.filter(function(i){ return i[1].subtipo !== 'convenio' && i[1].subtipo !== 'festivo'; });
-                var grpCon = items.filter(function(i){ return i[1].subtipo === 'convenio'; });
-                var grpFes = items.filter(function(i){ return i[1].subtipo === 'festivo'; });
+                var grpGen = items.filter(function(i){ return i[1].cat === 'generado' && i[1].subtipo !== 'convenio' && i[1].subtipo !== 'festivo'; });
+                var grpL26 = items.filter(function(i){ return i[1].cat === 'l26'; });
+                var grpCon = items.filter(function(i){ return i[1].cat === 'generado' && i[1].subtipo === 'convenio'; });
+                var grpFes = items.filter(function(i){ return i[1].cat === 'generado' && i[1].subtipo === 'festivo'; });
 
                 function _sortByFecha(arr) {
                     return arr.sort(function(a, b) {
@@ -3460,6 +3465,26 @@
                 if (grpGen.length) {
                     html += '<div style="font-size:0.72rem;font-weight:800;color:#be185d;letter-spacing:0.05em;margin-bottom:8px;padding:4px 2px;">✨ GENERADOS</div>';
                     html += grpGen.map(renderItemGen).join('');
+                }
+                if (grpL26.length) {
+                    if (grpGen.length) html += '<div style="border-top:1px solid #fed7aa;margin:12px 0 10px 0;"></div>';
+                    html += '<div style="font-size:0.72rem;font-weight:800;color:#c2410c;letter-spacing:0.05em;margin-bottom:8px;padding:4px 2px;">🔶 L-26</div>';
+                    html += grpL26.map(function(item) {
+                        var k=item[0], h=item[1];
+                        var eL26 = {borde:'#f97316', bg:'#fff7ed', color:'#c2410c'};
+                        var estadoLabel = '';
+                        if (h.cobrado) estadoLabel = ' <span style="font-size:0.7rem;background:#f0fdf4;color:#166534;border-radius:6px;padding:1px 6px;font-weight:700;">Cobrado</span>';
+                        else if (h.resuelto && h.resuelto.accion === 'librar') estadoLabel = ' <span style="font-size:0.7rem;background:#fff7ed;color:#c2410c;border-radius:6px;padding:1px 6px;font-weight:700;">Librado el '+h.resuelto.diaLibre+'</span>';
+                        var path = 'historial2/'+miID+'/'+k;
+                        var btnDec = (!h.resuelto && !h.cobrado) ? '<button data-k="'+k+'" data-f="'+(h.fecha||'')+'" onclick="_gestionarL26(this)" style="margin-top:8px;width:100%;padding:9px;background:#f97316;color:white;border:none;border-radius:10px;font-weight:700;">Gestionar</button>' : '';
+                        return '<div style="border:2px solid #f97316;border-radius:12px;padding:14px;margin-bottom:10px;background:#fff7ed;">' +
+                            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                                '<div style="font-weight:800;color:#c2410c;">🔶 '+(h.fecha||'—')+estadoLabel+'</div>' +
+                                _hmBtnBorrar(path) +
+                            '</div>' +
+                            btnDec +
+                        '</div>';
+                    }).join('');
                 }
                 if (grpCon.length) {
                     if (grpGen.length) html += '<div style="border-top:1px solid #f0e0c8;margin:12px 0 10px 0;"></div>';
