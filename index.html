@@ -1392,8 +1392,12 @@
             if (!dbCambios[miID]) dbCambios[miID] = {};
             dbCambios[miID][_genMes + '_' + _genDia] = { texto: 'L-26', clase: 'b-l26' };
             _hmBadges();
-            if (idCalendarioAbierto) _renderCalAnio(idCalendarioAbierto);
-            else if (_calModoGrupo && _calGrupoActivo) _renderCalGrupoAnio(_calGrupoActivo, _calTurnoActivo);
+            // Re-renderizar el calendario con miID directamente
+            if (document.getElementById('m-cal').style.display !== 'none') {
+                if (idCalendarioAbierto) _renderCalAnio(idCalendarioAbierto);
+                else _renderCalAnio(miID);
+            }
+            if (_calModoGrupo && _calGrupoActivo) _renderCalGrupoAnio(_calGrupoActivo, _calTurnoActivo);
         });
     }
 
@@ -2564,16 +2568,9 @@
     }
 
     function _hmBorrarL26PorFecha(fecha) {
-        // Al borrar la marca L-26 del calendario, borrar también del historial
-        db.ref('historial2/' + miID).once('value').then(function(snap) {
-            snap.forEach(function(child) {
-                var h = child.val();
-                if (h && h.cat === 'l26' && h.fecha === fecha) {
-                    db.ref('historial2/' + miID + '/' + child.key).remove();
-                    _hmBadges();
-                }
-            });
-        });
+        // Al borrar la marca L-26 del calendario, el L-26 del historial queda disponible
+        // Solo actualizamos los badges, NO borramos el historial
+        _hmBadges();
     }
 
     function _hmQuitarResolucionPendiente(fechaLibre) {
