@@ -1374,7 +1374,10 @@
     
     // ===== L-26 (días libres trabajados) =====
     function _abrirModalL26() {
-        cerrarDesplegables();
+        // Cerrar el menú inmediatamente
+        var menu = document.getElementById('ctx-menu');
+        if (menu) menu.style.display = 'none';
+        
         _genDia = diaSeleccionado.d;
         _genMes = diaSeleccionado.mIdx;
         var fecha = _genDia + '/' + (_genMes+1);
@@ -1403,6 +1406,10 @@
                 setTimeout(function() { notice.style.display = 'none'; }, 1500);
             }
         });
+        
+        // Prevenir que el menú se reabra
+        ignorarSiguienteClick = true;
+        modoSeleccionActivo = false;
     }
 
     function _abrirDecisionL26(key, fecha) {
