@@ -53,10 +53,10 @@
             top: 2px; right: 2px;
             width: 8px; height: 8px;
             border-radius: 2px;
-            background: transparent;
-            border: 2px solid #67e8f9;
+            background: #67e8f9;
+            border: 1px solid white;
         }
-        body.dark-mode .d-cell.tiene-nota::after { border-color: #0891b2; background: transparent; }
+        body.dark-mode .d-cell.tiene-nota::after { border-color: #1a1a2e; background: #0891b2; }
         .is-festivo-libre { background: #ef4444 !important; color: #fff !important; font-weight: 700; }
         body.dark-mode .is-festivo { background: #dc2626 !important; color: #000 !important; }
         body.dark-mode .is-festivo-libre { background: #dc2626 !important; color: #fff !important; }
@@ -94,19 +94,17 @@
         body.dark-mode .member-sub { color: var(--text) !important; }
         body.dark-mode [style*="color:#64748b"] { color: var(--text) !important; }
         body.dark-mode [style*="color: #64748b"] { color: var(--text) !important; }
-        body.dark-mode .b-inter       { background: #2a2000 !important; color: #fde68a !important; border: 2px solid #fde68a !important; }
-        body.dark-mode .b-cambio-libre { background: #3b0f0f !important; color: #fca5a5 !important; border: 2px solid #fca5a5 !important; }
-        body.dark-mode .b-pend        { background: #1e1040 !important; color: #c4b5fd !important; border: 2px solid #c4b5fd !important; }
-        body.dark-mode .b-generado    { background: #2d0a1e !important; color: #f9a8d4 !important; border: 2px solid #f9a8d4 !important; }
-        body.dark-mode .b-vac         { background: #052e16 !important; color: #86efac !important; border: 2px solid #86efac !important; }
-        body.dark-mode .b-sinretribuir { background: #3b0f0f !important; color: #fca5a5 !important; border: 2px solid #fca5a5 !important; }
+        body.dark-mode .b-inter       { background: #2a2000 !important; color: #fde68a !important; border: none !important; }
+        body.dark-mode .b-cambio-libre { background: #3b0f0f !important; color: #fca5a5 !important; border: none !important; }
+        body.dark-mode .b-pend        { background: #1e1040 !important; color: #c4b5fd !important; border: none !important; }
+        body.dark-mode .b-generado    { background: #2d0a1e !important; color: #f9a8d4 !important; border: none !important; }
+        body.dark-mode .b-vac         { background: #052e16 !important; color: #86efac !important; border: none !important; }
         .is-sun { text-decoration: underline; font-weight: 900; color: #000; }
-        .b-inter      { background: #fef08a !important; color: #854d0e !important; border: 2px solid #854d0e !important; }
-        .b-cambio-libre { background: #fee2e2 !important; color: #991b1b !important; border: 2px solid #991b1b !important; }
-        .b-pend       { background: #ede9fe !important; color: #5b21b6 !important; border: 2px solid #5b21b6 !important; }
-        .b-vac        { background: #bbf7d0 !important; color: #166534 !important; border: 2px solid #166534 !important; }
-        .b-generado   { background: #fce7f3 !important; color: #be185d !important; border: 2px solid #be185d !important; }
-        .b-sinretribuir { background: #fee2e2 !important; color: #991b1b !important; border: 2px solid #991b1b !important; }
+        .b-inter      { background: #fef08a !important; color: #854d0e !important; border: none !important; }
+        .b-cambio-libre { background: #fee2e2 !important; color: #991b1b !important; border: none !important; }
+        .b-pend       { background: #ede9fe !important; color: #5b21b6 !important; border: none !important; }
+        .b-vac        { background: #bbf7d0 !important; color: #166534 !important; border: none !important; }
+        .b-generado   { background: #fce7f3 !important; color: #be185d !important; border: none !important; }
         .legend-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding: 12px; background: var(--surface2); border-radius: 12px; justify-content: center; }
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; padding: 4px; border-radius: 6px; }
         .legend-item:active { background: var(--border); }
@@ -1377,17 +1375,10 @@
     // ===== L-26 (días libres trabajados) =====
     function _abrirModalL26() {
         cerrarDesplegables();
-        ignorarSiguienteClick = true;
-        _l26Dia = diaSeleccionado.d;
-        _l26Mes = diaSeleccionado.mIdx;
-        var fecha = _l26Dia + '/' + (_l26Mes+1);
-        document.getElementById('ml26-fecha').textContent = 'L-26: ' + fecha;
-        document.getElementById('modal-l26-confirmacion').style.display = 'flex';
-        _onModalOpen();
-    }
-    
-    function _confirmarL26() {
-        var fecha = _l26Dia + '/' + (_l26Mes+1);
+        _genDia = diaSeleccionado.d;
+        _genMes = diaSeleccionado.mIdx;
+        var fecha = _genDia + '/' + (_genMes+1);
+        // Guardar en historial2 como cat='l26'
         var key = Date.now();
         var updates = {};
         updates['historial2/' + miID + '/' + key] = {
@@ -1397,14 +1388,13 @@
             nota: 'L-26',
             esLibre: false
         };
-        updates['cambios/' + miID + '/' + _l26Mes + '_' + _l26Dia] = {
+        // Marcar en el calendario
+        updates['cambios/' + miID + '/' + _genMes + '_' + _genDia] = {
             texto: 'L-26',
             clase: 'b-l26'
         };
-        
         db.ref().update(updates).then(function() {
             _hmBadges();
-            document.getElementById('modal-l26-confirmacion').style.display = 'none';
         });
     }
 
@@ -1446,35 +1436,6 @@
         _cpTipoPrimerDia = null;
         document.getElementById('modal-tipo-propio').style.display = 'flex';
         _onModalOpen();
-    }
-
-    function _abrirModalSinRetribuir() {
-        cerrarDesplegables();
-        if (!diaSeleccionado || diaSeleccionado.d == null) return;
-        var d = diaSeleccionado.d, m = diaSeleccionado.mIdx;
-        var fecha = d + '/' + (m+1);
-        var ts = Date.now();
-        var updates = {};
-        updates['cambios/' + miID + '/' + m + '_' + d] = { texto: 'Sin Retribuir', clase: 'b-sinretribuir' };
-        updates['historial2/' + miID + '/' + ts] = {
-            cat: 'sinretribuir',
-            ts: ts,
-            fecha: fecha,
-            nota: '',
-            clase: 'b-sinretribuir'
-        };
-        db.ref().update(updates).then(function() {
-            modoSeleccionActivo = false;
-            document.getElementById('selection-notice').style.display = 'none';
-            _hmBadges();
-            mostrarNotificacion('Dia sin retribuir agregado: ' + fecha);
-        });
-    }).then(function() {
-            modoSeleccionActivo = false;
-            document.getElementById('selection-notice').style.display = 'none';
-            _hmBadges();
-            mostrarNotificacion('Dia sin retribuir agregado: ' + fecha);
-        });
     }
 
     function _elegirTipoPropioD1(tipo) {
@@ -2122,9 +2083,9 @@
                 let clase = esLibreReal ? "is-free" : "is-work";
                 if ((start + d - 1) % 7 === 6) clase += " is-sun";
                 if (data) clase += " " + data.clase;
-                // b-l26: día libre que se trabaja -> mostrar como cuadrado naranja
+                // b-l26: día libre que se trabaja -> mostrar como trabajo (círculo)
                 const esL26 = data?.clase === 'b-l26';
-                if (esL26) { clase = "is-work b-l26"; forma = 'shape-square'; }
+                if (esL26) { clase = "is-work b-l26"; }
                 // Festivo: rojo fondo, negro si trabaja, blanco si libra
                 if (_esFestivo(d, mIdx + 1, _calAnio)) clase = esLibreReal ? "is-festivo-libre" : "is-festivo";
                 if (_calAnio === _anioActual && dbNotas[uid]?.[`${mIdx}_${d}`]) clase += " tiene-nota";
@@ -2270,7 +2231,6 @@
             'vacaciones': () => abrirVacModal(),
             'comp': () => prepararCambio('COMP'),
             'auto': () => _abrirModalCambioPropio(),
-            'sinretribuir': () => _abrirModalSinRetribuir(),
             'nota': () => abrirNotaModal(),
             'borrar': () => borrarCambio()
         };
@@ -2285,7 +2245,6 @@
             { label: '🌴 Vacaciones', color: 'var(--success)', key: 'vacaciones' },
             { label: '🤝 Cambio con Compañero', color: 'var(--text)', key: 'comp' },
             { label: '🔄 Cambio Propio', color: 'var(--text)', key: 'auto' },
-            { label: '🚫 Sin Retribuir', color: '#ef4444', key: 'sinretribuir' },
             { label: '📝 Mis Notas', color: '#06b6d4', key: 'nota' },
             { label: '❌ Borrar', color: 'red', key: 'borrar' }
         ];
@@ -2294,12 +2253,7 @@
             div.className = 'menu-opt';
             div.style.color = o.color;
             div.textContent = o.label;
-            div.addEventListener('click', (e) => {
-                e.stopPropagation();
-                accionesMenu[o.key]();
-                // Cerrar el menú después de ejecutar la acción
-                setTimeout(() => { menu.style.display = 'none'; }, 100);
-            });
+            div.addEventListener('click', () => accionesMenu[o.key]());
             menu.appendChild(div);
         });
 
@@ -2619,66 +2573,10 @@
         });
     }
 
-    // Función mejorada para borrar L-26 con opciones
-    window._hmBorrarL26 = function(path, key) {
-        var opciones = confirm('¿Qué quieres borrar?\n\nOK = Borrar completamente el L-26\nCancelar = Borrar solo del calendario (mantener disponible)');
-        
-        if (opciones === true) {
-            // Borrar completamente del historial
-            db.ref(path).remove().then(function() {
-                _hmBadges();
-                if (document.getElementById('historial-modal').style.display !== 'none') {
-                    _hmCargar('generado');
-                }
-            });
-        } else {
-            // Borrar solo del calendario pero mantener el L-26 disponible
-            db.ref('historial2/' + miID + '/' + key).once('value').then(function(snap) {
-                var h = snap.val();
-                if (h && h.resuelto) {
-                    // Si está resuelto, quitar la resolución
-                    db.ref('historial2/' + miID + '/' + key + '/resuelto').remove().then(function() {
-                        // También borrar del calendario
-                        if (h.resuelto.diaLibre) {
-                            var partes = h.resuelto.diaLibre.split('/');
-                            var d = parseInt(partes[0]);
-                            var m = parseInt(partes[1]) - 1;
-                            db.ref('cambios/' + miID + '/' + m + '_' + d).remove();
-                        }
-                        _hmBadges();
-                        if (document.getElementById('historial-modal').style.display !== 'none') {
-                            _hmCargar('generado');
-                        }
-                    });
-                }
-            });
-        }
-    };
-
     function _hmBorrarL26PorFecha(fecha) {
         // Al borrar la marca L-26 del calendario, el L-26 del historial queda disponible
         // Solo actualizamos los badges, NO borramos el historial
         _hmBadges();
-    }
-
-    // Función para editar L-26
-    window._hmEditarL26 = function(key) {
-        db.ref('historial2/' + miID + '/' + key).once('value').then(function(snap) {
-            var h = snap.val();
-            if (!h) return;
-            
-            var nuevaNota = prompt('Editar nota de L-26:', h.nota || 'L-26');
-            if (nuevaNota === null) return;
-            
-            db.ref('historial2/' + miID + '/' + key).update({
-                nota: nuevaNota || 'L-26'
-            }).then(function() {
-                _hmBadges();
-                if (document.getElementById('historial-modal').style.display !== 'none') {
-                    _hmCargar('generado');
-                }
-            });
-        });
     }
 
     function _hmQuitarResolucionPendiente(fechaLibre) {
@@ -3614,11 +3512,11 @@
                         if (h.cobrado) estadoLabel = ' <span style="font-size:0.7rem;background:#f0fdf4;color:#166534;border-radius:6px;padding:1px 6px;font-weight:700;">Cobrado</span>';
                         else if (h.resuelto && h.resuelto.accion === 'librar') estadoLabel = ' <span style="font-size:0.7rem;background:#fff7ed;color:#c2410c;border-radius:6px;padding:1px 6px;font-weight:700;">Librado el '+h.resuelto.diaLibre+'</span>';
                         var path = 'historial2/'+miID+'/'+k;
-                        var btnDec = (!h.resuelto && !h.cobrado) ? '<button data-k="'+k+'" data-f="'+(h.fecha||'')+'" onclick="_gestionarL26(this)" style="margin-top:8px;width:100%;padding:9px;background:#f97316;color:white;border:none;border-radius:10px;font-weight:700;cursor:pointer;">🔶 Resolver</button>' : '';
+                        var btnDec = (!h.resuelto && !h.cobrado) ? '<button data-k="'+k+'" data-f="'+(h.fecha||'')+'" onclick="_gestionarL26(this)" style="margin-top:8px;width:100%;padding:9px;background:#f97316;color:white;border:none;border-radius:10px;font-weight:700;">Gestionar</button>' : '';
                         return '<div style="border:2px solid #f97316;border-radius:12px;padding:14px;margin-bottom:10px;background:#fff7ed;">' +
-                            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+                            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
                                 '<div style="font-weight:800;color:#c2410c;">🔶 '+(h.fecha||'—')+estadoLabel+'</div>' +
-                                '<div style="display:flex;gap:4px;">' + _hmBtnEditar(k,'l26') + '<button data-path="' + path + '" data-k="' + k + '" onclick="_hmBorrarL26(this.dataset.path, this.dataset.k)" style="background:#fee2e2;color:#ef4444;border:none;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;flex-shrink:0;cursor:pointer;">🗑️</button>' + '</div>' +
+                                _hmBtnBorrar(path) +
                             '</div>' +
                             btnDec +
                         '</div>';
@@ -4511,20 +4409,6 @@ if ('serviceWorker' in navigator) {
             <button onclick="_confirmarPendienteLibra()" style="width:100%; padding:12px; background:var(--success); color:white; border:none; border-radius:10px; font-weight:800;">✅ Confirmar</button>
         </div>
         <button onclick="document.getElementById('modal-pendiente-tipo').style.display='none';" style="width:100%; padding:10px; background:#f5f3ff; border:none; border-radius:10px; color:var(--primary-dark); font-weight:700;">Cancelar</button>
-    </div>
-</div>
-
-<!-- Modal: L-26 confirmación -->
-<div id="modal-l26-confirmacion" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.75); z-index:7000; align-items:center; justify-content:center; padding:20px;">
-    <div style="background:var(--surface); padding:24px; border-radius:20px; width:100%; max-width:320px; border:1px solid #f97316;">
-        <div style="font-size:1.6rem; text-align:center; margin-bottom:8px;">🔶</div>
-        <h3 style="margin:0 0 6px 0; color:#ea580c; text-align:center;">L-26</h3>
-        <div id="ml26-fecha" style="font-size:0.9rem; font-weight:800; color:#ea580c; margin-bottom:16px; text-align:center;"></div>
-        <p style="font-size:0.88rem; color:var(--text); margin:0 0 14px 0; font-weight:600; text-align:center;">Registrar como L-26 (día libre trabajado)?</p>
-        <div style="display:flex; gap:10px; margin-bottom:12px;">
-            <button onclick="_confirmarL26()" style="flex:1; padding:12px 8px; background:#fed7aa; border:2px solid #f97316; border-radius:10px; font-weight:800; color:#ea580c; cursor:pointer;">✅ Confirmar</button>
-            <button onclick="document.getElementById('modal-l26-confirmacion').style.display='none';" style="flex:1; padding:12px 8px; background:#f5f3ff; border:2px solid var(--primary); border-radius:10px; font-weight:800; color:var(--primary-dark); cursor:pointer;">❌ Cancelar</button>
-        </div>
     </div>
 </div>
 
