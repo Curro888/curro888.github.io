@@ -1395,6 +1395,13 @@
         };
         db.ref().update(updates).then(function() {
             _hmBadges();
+            // Mostrar notificacion de exito
+            var notice = document.getElementById('selection-notice');
+            if (notice) {
+                notice.innerText = 'L-26 registrado para ' + fecha;
+                notice.style.display = 'block';
+                setTimeout(function() { notice.style.display = 'none'; }, 1500);
+            }
         });
     }
 
