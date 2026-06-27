@@ -1375,6 +1375,7 @@
     // ===== L-26 (días libres trabajados) =====
     function _abrirModalL26() {
         cerrarDesplegables();
+        ignorarSiguienteClick = true;
         _l26Dia = diaSeleccionado.d;
         _l26Mes = diaSeleccionado.mIdx;
         var fecha = _l26Dia + '/' + (_l26Mes+1);
@@ -1399,15 +1400,9 @@
             clase: 'b-l26'
         };
         
-        // Prevenir que se ejecute handleDayClick
-        ignorarSiguienteClick = true;
-        pressTimerActive = true;
-        
         db.ref().update(updates).then(function() {
             _hmBadges();
             document.getElementById('modal-l26-confirmacion').style.display = 'none';
-            // Permitir clicks nuevamente despues de un pequeno delay
-            setTimeout(function() { pressTimerActive = false; }, 300);
         });
     }
 
