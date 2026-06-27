@@ -1398,9 +1398,16 @@
             texto: 'L-26',
             clase: 'b-l26'
         };
+        
+        // Prevenir que se ejecute handleDayClick
+        ignorarSiguienteClick = true;
+        pressTimerActive = true;
+        
         db.ref().update(updates).then(function() {
             _hmBadges();
             document.getElementById('modal-l26-confirmacion').style.display = 'none';
+            // Permitir clicks nuevamente despues de un pequeno delay
+            setTimeout(function() { pressTimerActive = false; }, 300);
         });
     }
 
