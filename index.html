@@ -2260,7 +2260,11 @@
             div.className = 'menu-opt';
             div.style.color = o.color;
             div.textContent = o.label;
-            div.addEventListener('click', () => accionesMenu[o.key]());
+            div.addEventListener('click', () => {
+                accionesMenu[o.key]();
+                // Cerrar el menú después de ejecutar la acción
+                setTimeout(() => { menu.style.display = 'none'; }, 100);
+            });
             menu.appendChild(div);
         });
 
