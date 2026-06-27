@@ -99,12 +99,14 @@
         body.dark-mode .b-pend        { background: #1e1040 !important; color: #c4b5fd !important; border: 2px solid #c4b5fd !important; }
         body.dark-mode .b-generado    { background: #2d0a1e !important; color: #f9a8d4 !important; border: 2px solid #f9a8d4 !important; }
         body.dark-mode .b-vac         { background: #052e16 !important; color: #86efac !important; border: 2px solid #86efac !important; }
+        body.dark-mode .b-sinretribuir { background: #3b0f0f !important; color: #fca5a5 !important; border: 2px solid #fca5a5 !important; }
         .is-sun { text-decoration: underline; font-weight: 900; color: #000; }
         .b-inter      { background: #fef08a !important; color: #854d0e !important; border: 2px solid #854d0e !important; }
         .b-cambio-libre { background: #fee2e2 !important; color: #991b1b !important; border: 2px solid #991b1b !important; }
         .b-pend       { background: #ede9fe !important; color: #5b21b6 !important; border: 2px solid #5b21b6 !important; }
         .b-vac        { background: #bbf7d0 !important; color: #166534 !important; border: 2px solid #166534 !important; }
         .b-generado   { background: #fce7f3 !important; color: #be185d !important; border: 2px solid #be185d !important; }
+        .b-sinretribuir { background: #fee2e2 !important; color: #991b1b !important; border: 2px solid #991b1b !important; }
         .legend-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding: 12px; background: var(--surface2); border-radius: 12px; justify-content: center; }
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; padding: 4px; border-radius: 6px; }
         .legend-item:active { background: var(--border); }
@@ -1446,6 +1448,26 @@
         _onModalOpen();
     }
 
+    function _abrirModalSinRetribuir() {
+        cerrarDesplegables();
+        if (!diaSeleccionado || diaSeleccionado.d == null) return;
+        var d = diaSeleccionado.d, m = diaSeleccionado.mIdx;
+        var fecha = d + '/' + (m+1);
+        var ts = Date.now();
+        db.ref('historial2/' + miID + '/' + ts).set({
+            cat: 'sinretribuir',
+            ts: ts,
+            fecha: fecha,
+            nota: '',
+            clase: 'b-sinretribuir'
+        }).then(function() {
+            modoSeleccionActivo = false;
+            document.getElementById('selection-notice').style.display = 'none';
+            _hmBadges();
+            mostrarNotificacion('Dia sin retribuir agregado: ' + fecha);
+        });
+    }
+
     function _elegirTipoPropioD1(tipo) {
         _cpTipoPrimerDia = tipo;
         document.getElementById('modal-tipo-propio').style.display = 'none';
@@ -2239,6 +2261,7 @@
             'vacaciones': () => abrirVacModal(),
             'comp': () => prepararCambio('COMP'),
             'auto': () => _abrirModalCambioPropio(),
+            'sinretribuir': () => _abrirModalSinRetribuir(),
             'nota': () => abrirNotaModal(),
             'borrar': () => borrarCambio()
         };
@@ -2253,6 +2276,7 @@
             { label: '🌴 Vacaciones', color: 'var(--success)', key: 'vacaciones' },
             { label: '🤝 Cambio con Compañero', color: 'var(--text)', key: 'comp' },
             { label: '🔄 Cambio Propio', color: 'var(--text)', key: 'auto' },
+            { label: '🚫 Sin Retribuir', color: '#ef4444', key: 'sinretribuir' },
             { label: '📝 Mis Notas', color: '#06b6d4', key: 'nota' },
             { label: '❌ Borrar', color: 'red', key: 'borrar' }
         ];
