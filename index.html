@@ -1,7 +1,3 @@
-
-
-
- 
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -41,7 +37,7 @@
         .d-cell { padding: 10px 0; font-size: 0.85rem; text-align: center; border-radius: 6px; cursor: pointer; margin: 2px; font-weight: 500; border: 1px solid transparent; }
         .d-cell.shape-circle { border-radius: 50% !important; width: 32px; height: 32px; line-height: 32px; padding: 0; margin: 2px auto; display: flex; align-items: center; justify-content: center; }
         .d-cell.shape-square { border-radius: 4px !important; }
-        .is-free { background: #fee2e2; color: #991b1b; }
+        .is-free { background: #fee2e2; color: #991b1b; border: 2px solid #ef4444; }
         .is-work { background: #f8fafc; color: #475569; }
         body.dark-mode .is-free { background: #4a2828; color: #fca5a5; }
         body.dark-mode .is-work { background: #2a3245; color: #a8b8cc; }
@@ -94,17 +90,23 @@
         body.dark-mode .member-sub { color: var(--text) !important; }
         body.dark-mode [style*="color:#64748b"] { color: var(--text) !important; }
         body.dark-mode [style*="color: #64748b"] { color: var(--text) !important; }
-        body.dark-mode .b-inter       { background: #2a2000 !important; color: #fde68a !important; border: none !important; }
-        body.dark-mode .b-cambio-libre { background: #3b0f0f !important; color: #fca5a5 !important; border: none !important; }
-        body.dark-mode .b-pend        { background: #1e1040 !important; color: #c4b5fd !important; border: none !important; }
-        body.dark-mode .b-generado    { background: #2d0a1e !important; color: #f9a8d4 !important; border: none !important; }
-        body.dark-mode .b-vac         { background: #052e16 !important; color: #86efac !important; border: none !important; }
+        body.dark-mode .is-free        { background: #3b0f0f !important; color: #fca5a5 !important; border: 2px solid #ef4444 !important; }
+        body.dark-mode .is-work        { background: #2a2000 !important; color: #fde68a !important; border: 2px solid #eab308 !important; }
+        body.dark-mode .b-inter        { background: #2a2000 !important; color: #fde68a !important; border: 2px solid #ca8a04 !important; }
+        body.dark-mode .b-cambio-libre { background: #3b0f0f !important; color: #fca5a5 !important; border: 2px solid #ef4444 !important; }
+        body.dark-mode .b-pend         { background: #1e1040 !important; color: #c4b5fd !important; border: 2px solid #7c3aed !important; }
+        body.dark-mode .b-generado     { background: #2d0a1e !important; color: #f9a8d4 !important; border: 2px solid #ec4899 !important; }
+        body.dark-mode .b-vac          { background: #052e16 !important; color: #86efac !important; border: 2px solid #16a34a !important; }
+        body.dark-mode .b-l26          { background: #431407 !important; color: #fdba74 !important; border: 2px solid #f97316 !important; }
+        body.dark-mode .b-sinret       { background: #3b0f0f !important; color: #fca5a5 !important; border: 2px solid #ef4444 !important; }
         .is-sun { text-decoration: underline; font-weight: 900; color: #000; }
-        .b-inter      { background: #fef08a !important; color: #854d0e !important; border: none !important; }
-        .b-cambio-libre { background: #fee2e2 !important; color: #991b1b !important; border: none !important; }
-        .b-pend       { background: #ede9fe !important; color: #5b21b6 !important; border: none !important; }
-        .b-vac        { background: #bbf7d0 !important; color: #166534 !important; border: none !important; }
-        .b-generado   { background: #fce7f3 !important; color: #be185d !important; border: none !important; }
+        .is-work      { background: #fef9c3 !important; color: #854d0e !important; border: 2px solid #eab308 !important; }
+        .b-inter      { background: #fef08a !important; color: #854d0e !important; border: 2px solid #ca8a04 !important; }
+        .b-cambio-libre { background: #fee2e2 !important; color: #991b1b !important; border: 2px solid #ef4444 !important; }
+        .b-pend       { background: #ede9fe !important; color: #5b21b6 !important; border: 2px solid #7c3aed !important; }
+        .b-vac        { background: #bbf7d0 !important; color: #166534 !important; border: 2px solid #16a34a !important; }
+        .b-generado   { background: #fce7f3 !important; color: #be185d !important; border: 2px solid #ec4899 !important; }
+        .b-sinret     { background: #fee2e2 !important; color: #991b1b !important; border: 2px solid #ef4444 !important; }
         .legend-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding: 12px; background: var(--surface2); border-radius: 12px; justify-content: center; }
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; padding: 4px; border-radius: 6px; }
         .legend-item:active { background: var(--border); }
@@ -438,7 +440,8 @@
         </div>
         <div class="legend-container">
             <div class="legend-item"><div class="legend-box" style="background:#fee2e2;"></div><span>Libre</span></div>
-            <div class="legend-item"><div class="legend-box" style="background:#f8fafc; border-color:#cbd5e1;"></div><span>Trabaja</span></div>
+            <div class="legend-item"><div class="legend-box" style="background:#fef9c3; border:2px solid #eab308;"></div><span>Trabaja</span></div>
+            <div class="legend-item"><div class="legend-box" style="background:#fee2e2; border:2px solid #ef4444;"></div><span>Sin Retribuir</span></div>
             <div class="legend-item"><div class="legend-box" style="background:#fef08a;"></div><span>C. Compañero</span></div>
             <div class="legend-item"><div class="legend-box" style="background:#bbf7d0;"></div><span>Vacaciones</span></div>
             <div class="legend-item"><div class="legend-box" style="background:#ede9fe;"></div><span>Pendiente</span></div>
@@ -1426,6 +1429,34 @@
         }
     }
 
+
+    // ===== SIN RETRIBUIR =====
+    function _abrirSinRetribuir() {
+        cerrarDesplegables();
+        var d = diaSeleccionado.d, mIdx = diaSeleccionado.mIdx;
+        var key = mIdx + '_' + d;
+        db.ref('cambios/' + miID + '/' + key).set({ texto: 'Sin Retribuir', clase: 'b-sinret', nota: '' }).then(function() {
+            _hmBadges();
+        });
+    }
+
+    window._borrarSinRetribuir = function(btn) {
+        if (!confirm('¿Borrar este día sin retribuir?')) return;
+        var key = btn.getAttribute('data-sr-key');
+        db.ref('cambios/' + miID + '/' + key).remove().then(function() {
+            _hmBadges();
+            _hmCargar('sinret');
+        });
+    };
+
+    window._editSinRetribuir = function(input) {
+        var key = input.getAttribute('data-sr-key');
+        clearTimeout(input._t);
+        input._t = setTimeout(function() {
+            db.ref('cambios/' + miID + '/' + key + '/nota').set(input.value);
+        }, 800);
+    };
+
     // ===== MODAL CAMBIO PROPIO =====
     var _cpTipoPrimerDia = null;
 
@@ -1963,7 +1994,7 @@
             const t = data.texto || '';
             if (c === 'b-cambio-libre' || c === 'b-vac') {
                 esLibreReal = true;
-            } else if (c === 'b-inter' || c === 'b-pend' || c === 'b-generado' || c === 'b-l26') {
+            } else if (c === 'b-inter' || c === 'b-pend' || c === 'b-generado' || c === 'b-l26' || c === 'b-sinret') {
                 esLibreReal = false;
             } else if (t.includes('Libras')) {
                 esLibreReal = true;
@@ -2232,6 +2263,7 @@
             'comp': () => prepararCambio('COMP'),
             'auto': () => _abrirModalCambioPropio(),
             'nota': () => abrirNotaModal(),
+            'sinret': () => _abrirSinRetribuir(),
             'borrar': () => borrarCambio()
         };
 
@@ -2246,6 +2278,7 @@
             { label: '🤝 Cambio con Compañero', color: 'var(--text)', key: 'comp' },
             { label: '🔄 Cambio Propio', color: 'var(--text)', key: 'auto' },
             { label: '📝 Mis Notas', color: '#06b6d4', key: 'nota' },
+            { label: '🔴 Sin Retribuir', color: '#ef4444', key: 'sinret' },
             { label: '❌ Borrar', color: 'red', key: 'borrar' }
         ];
         opts.forEach(o => {
@@ -2698,8 +2731,9 @@
                 } else if (texto.includes('Libras (por L-26')) {
                     _hmQuitarResolucionL26(fecha);
                 } else if (texto === 'L-26') {
-                    // Borrar el L-26 del historial directamente
                     _hmBorrarL26PorFecha(fecha);
+                } else if (texto === 'Sin Retribuir') {
+                    _hmBadges();
                 } else if (texto.includes('Haces (x ') && data && data.linkedUid) {
                     // Cambio con compañero
                     _hmBorrarCambioComp(fecha, data.linkedKey);
@@ -3337,6 +3371,12 @@
             var bf = document.getElementById('badge-festivo');
             if (bf) { bf.style.display = c.festivo > 0 ? 'block' : 'none'; bf.textContent = c.festivo; }
         });
+        db.ref('cambios/' + miID).once('value').then(function(snapSR) {
+            var sr = 0;
+            if (snapSR.val()) Object.values(snapSR.val()).forEach(function(c) { if (c && c.clase === 'b-sinret') sr++; });
+            var bsr = document.getElementById('badge-sinret');
+            if (bsr) { bsr.style.display = sr > 0 ? 'block' : 'none'; bsr.textContent = sr; }
+        });
         db.ref('notas/' + miID).once('value').then(function(snap) {
             var n = Object.keys(snap.val() || {}).length;
             var bn = document.getElementById('badge-notas');
@@ -3348,10 +3388,10 @@
 
     function abrirCategoria(cat) {
         _hmCat = cat;
-        var titulos = { generado:'\u2728 Generado', l26:'\ud83d\udd36 L-26', pendiente:'\u23f3 Pendiente', comp:'Con companero', propio:'Cambio propio', notas:'\ud83d\udcdd Mis Notas' };
+        var titulos = { generado:'\u2728 Generado', l26:'\ud83d\udd36 L-26', pendiente:'\u23f3 Pendiente', comp:'Con companero', propio:'Cambio propio', notas:'\ud83d\udcdd Mis Notas', sinret:'\ud83d\udd34 Sin Retribuir' };
         document.getElementById('hm-titulo').textContent = titulos[cat] || cat;
         document.getElementById('hm-form-wrap').style.display = 'none';
-        document.getElementById('hm-btn-add').style.display = (cat === 'notas') ? 'none' : 'inline-block';
+        document.getElementById('hm-btn-add').style.display = (cat === 'notas' || cat === 'sinret') ? 'none' : 'inline-block';
         _hmIr('detalle');
         _hmPush('detalle');
         if (_hmListener) { _hmListener.off(); _hmListener = null; }
@@ -3409,6 +3449,33 @@
                             '</div>' +
                         '</div>' +
                         '<div style="font-size:0.85rem;color:#155e75;white-space:pre-wrap;">'+(h.texto||'')+'</div>' +
+                    '</div>';
+                }).join('');
+            });
+            return;
+        }
+
+        if (cat === 'sinret') {
+            db.ref('cambios/' + miID).once('value').then(function(snap) {
+                var items = Object.entries(snap.val() || {}).filter(function(e) { return e[1] && e[1].clase === 'b-sinret'; });
+                items.sort(function(a,b) { return a[0].localeCompare(b[0]); });
+                if (!items.length) { cont.innerHTML='<div style="text-align:center;color:#64748b;padding:20px;">Sin días marcados. Mantén pulsado un día libre y elige 🔴 Sin Retribuir.</div>'; return; }
+                cont.innerHTML = items.map(function(item) {
+                    var k=item[0], h=item[1];
+                    // k = "mIdx_d" p.ej. "0_15"
+                    var parts = k.split('_');
+                    var mIdx = parseInt(parts[0]), d = parseInt(parts[1]);
+                    var meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                    var fechaLabel = d + ' ' + (meses[mIdx]||'');
+                    var nota = h.nota || '';
+                    return '<div style="border:2px solid #ef4444;border-radius:12px;padding:14px;margin-bottom:10px;background:#fff1f2;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+                            '<div style="font-weight:800;color:#991b1b;">🔴 ' + fechaLabel + '</div>' +
+                            '<button data-sr-key="'+k+'" onclick="_borrarSinRetribuir(this)" style="background:#fee2e2;color:#ef4444;border:none;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;">🗑️</button>' +
+                        '</div>' +
+                        '<div style="display:flex;gap:6px;align-items:center;">' +
+                            '<input data-sr-key="'+k+'" value="'+nota+'" placeholder="Añadir nota (opcional)..." maxlength="100" style="flex:1;padding:7px 10px;border:1px solid #fca5a5;border-radius:8px;font-size:0.82rem;background:#fff;" oninput="_editSinRetribuir(this)"/>' +
+                        '</div>' +
                     '</div>';
                 }).join('');
             });
@@ -4105,6 +4172,12 @@
                     <div style="font-weight:800; color:var(--danger);">Cambio propio</div>
                     <div style="font-size:0.72rem; color:var(--danger); opacity:0.7; margin-top:3px;">Tus permutas</div>
                     <div id="badge-propio" style="display:none; position:absolute; top:8px; right:10px; background:var(--danger); color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
+                </div>
+                <div onclick="abrirCategoria('sinret')" style="border:2px solid #ef4444; background:#fff1f2; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
+                    <div style="font-size:1.8rem; margin-bottom:6px;">🔴</div>
+                    <div style="font-weight:800; color:#991b1b;">Sin Retribuir</div>
+                    <div style="font-size:0.72rem; color:#991b1b; opacity:0.7; margin-top:3px;">Días sin compensar</div>
+                    <div id="badge-sinret" style="display:none; position:absolute; top:8px; right:10px; background:#ef4444; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                 </div>
                 <div onclick="abrirCategoria('notas')" style="border:2px solid #06b6d4; background:#ecfeff; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
                     <div style="font-size:1.8rem; margin-bottom:6px;">📝</div>
