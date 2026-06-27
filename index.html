@@ -48,11 +48,11 @@
             position: absolute;
             top: 2px; right: 2px;
             width: 8px; height: 8px;
-            border-radius: 50%;
-            background: #06b6d4;
-            border: 1.5px solid white;
+            border-radius: 2px;
+            background: #67e8f9;
+            border: 1px solid white;
         }
-        body.dark-mode .d-cell.tiene-nota::after { border-color: #1a1a2e; }
+        body.dark-mode .d-cell.tiene-nota::after { border-color: #1a1a2e; background: #0891b2; }
         .is-festivo-libre { background: #ef4444 !important; color: #fff !important; font-weight: 700; }
         body.dark-mode .is-festivo { background: #dc2626 !important; color: #000 !important; }
         body.dark-mode .is-festivo-libre { background: #dc2626 !important; color: #fff !important; }
@@ -90,16 +90,17 @@
         body.dark-mode .member-sub { color: var(--text) !important; }
         body.dark-mode [style*="color:#64748b"] { color: var(--text) !important; }
         body.dark-mode [style*="color: #64748b"] { color: var(--text) !important; }
-        body.dark-mode .b-inter { border: 2px solid var(--yellow) !important; background: #2a2000 !important; color: #fde68a !important; }
-        body.dark-mode .b-cambio-libre { border: 2px solid var(--danger) !important; background: #3b0f0f !important; color: #fca5a5 !important; }
-        body.dark-mode .b-pend { border: 2px solid var(--primary) !important; background: #1e1040 !important; color: #c4b5fd !important; }
-        body.dark-mode .b-generado { border: 2px solid var(--pink) !important; background: #2d0a1e !important; color: #f9a8d4 !important; }
+        body.dark-mode .b-inter       { background: #2a2000 !important; color: #fde68a !important; border: none !important; }
+        body.dark-mode .b-cambio-libre { background: #3b0f0f !important; color: #fca5a5 !important; border: none !important; }
+        body.dark-mode .b-pend        { background: #1e1040 !important; color: #c4b5fd !important; border: none !important; }
+        body.dark-mode .b-generado    { background: #2d0a1e !important; color: #f9a8d4 !important; border: none !important; }
+        body.dark-mode .b-vac         { background: #052e16 !important; color: #86efac !important; border: none !important; }
         .is-sun { text-decoration: underline; font-weight: 900; color: #000; }
-        .b-inter { border: 2px solid var(--yellow) !important; background: #fefce8 !important; color: #854d0e !important; }
-        .b-cambio-libre { border: 2px solid var(--danger) !important; background: #fff1f2 !important; color: var(--danger) !important; }
-        .b-pend { border: 2px solid var(--primary) !important; background: var(--white) !important; color: var(--primary) !important; }
-        .b-vac { border: 2px solid var(--success) !important; background: #f0fdf4 !important; color: #166534 !important; }
-        .b-generado { border: 2px solid var(--pink) !important; background: #fdf2f8 !important; color: #be185d !important; }
+        .b-inter      { background: #fef08a !important; color: #854d0e !important; border: none !important; }
+        .b-cambio-libre { background: #fee2e2 !important; color: #991b1b !important; border: none !important; }
+        .b-pend       { background: #ede9fe !important; color: #5b21b6 !important; border: none !important; }
+        .b-vac        { background: #bbf7d0 !important; color: #166534 !important; border: none !important; }
+        .b-generado   { background: #fce7f3 !important; color: #be185d !important; border: none !important; }
         .legend-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding: 12px; background: var(--surface2); border-radius: 12px; justify-content: center; }
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; padding: 4px; border-radius: 6px; }
         .legend-item:active { background: var(--border); }
@@ -432,15 +433,16 @@
             </div>
         </div>
         <div class="legend-container">
-            <div class="legend-item" onclick="mostrarInformeLeyenda('is-free','Días Libres Base')"><div class="legend-box is-free"></div><span>Libre</span></div>
-            <div class="legend-item" onclick="mostrarInformeLeyenda('is-work','Días de Trabajo')"><div class="legend-box is-work"></div><span>Trabaja</span></div>
-            <div class="legend-item" onclick="mostrarInformeLeyenda('b-cambio-libre','Libras por Cambio')"><div class="legend-box b-cambio-libre"></div><span>Libras (x cambio)</span></div>
-            <div class="legend-item" onclick="mostrarInformeLeyenda('b-inter','Haces por Cambio')"><div class="legend-box b-inter"></div><span>Haces (x cambio)</span></div>
-            <div class="legend-item" onclick="mostrarInformeLeyenda('b-vac','Vacaciones')"><div class="legend-box b-vac"></div><span>Vacaciones</span></div>
-            <div class="legend-item" onclick="mostrarInformeLeyenda('b-pend','Pendientes')"><div class="legend-box b-pend"></div><span>Pendiente</span></div>
-            <div class="legend-item" onclick="mostrarInformeLeyenda('b-generado','Generados')"><div class="legend-box b-generado"></div><span>Generado</span></div>
-            <div class="legend-item" onclick="mostrarInformeLeyenda('b-l26','L-26')"><div class="legend-box b-l26"></div><span>L-26</span></div>
-            <div class="legend-item"><div style="width:18px;height:18px;border-radius:50%;background:#06b6d4;border:2px solid white;"></div><span>📝 Nota</span></div>
+            <div class="legend-item"><div class="legend-box" style="background:#fee2e2;"></div><span>Libre</span></div>
+            <div class="legend-item"><div class="legend-box" style="background:#f8fafc; border-color:#cbd5e1;"></div><span>Trabaja</span></div>
+            <div class="legend-item"><div class="legend-box" style="background:#fef08a;"></div><span>C. Compañero</span></div>
+            <div class="legend-item"><div class="legend-box" style="background:#bbf7d0;"></div><span>Vacaciones</span></div>
+            <div class="legend-item"><div class="legend-box" style="background:#ede9fe;"></div><span>Pendiente</span></div>
+            <div class="legend-item" onclick="mostrarInformeLeyenda('b-generado','Generados')"><div class="legend-box" style="background:#fce7f3;"></div><span>Generado</span></div>
+            <div class="legend-item" onclick="mostrarInformeLeyenda('b-l26','L-26')"><div class="legend-box" style="background:#fed7aa;"></div><span>L-26</span></div>
+            <div class="legend-item"><div class="legend-box" style="background:#fee2e2;"></div><span>Libra (cambio)</span></div>
+            <div class="legend-item"><div class="legend-box" style="background:#67e8f9; border-radius:2px;"></div><span>📝 Nota</span></div>
+        </div>
         </div>
         <div class="cal-grid" id="m-grid"></div>
     </div>
@@ -1388,16 +1390,7 @@
             clase: 'b-l26'
         };
         db.ref().update(updates).then(function() {
-            // Actualizar dbCambios localmente sin esperar al listener
-            if (!dbCambios[miID]) dbCambios[miID] = {};
-            dbCambios[miID][_genMes + '_' + _genDia] = { texto: 'L-26', clase: 'b-l26' };
             _hmBadges();
-            // Re-renderizar según el modo activo
-            var calVisible = document.getElementById('m-cal').style.display !== 'none';
-            if (calVisible && idCalendarioAbierto) _renderCalAnio(idCalendarioAbierto);
-            else if (calVisible) _renderCalAnio(miID);
-            else if (_calModoGrupo && _calGrupoActivo) _renderCalGrupoAnio(_calGrupoActivo, _calTurnoActivo);
-            else renderList(); // modo individual: actualiza las tarjetas del panel principal
         });
     }
 
@@ -2092,7 +2085,8 @@
                 // Festivo: rojo fondo, negro si trabaja, blanco si libra
                 if (_esFestivo(d, mIdx + 1, _calAnio)) clase = esLibreReal ? "is-festivo-libre" : "is-festivo";
                 if (_calAnio === _anioActual && dbNotas[uid]?.[`${mIdx}_${d}`]) clase += " tiene-nota";
-                let forma = (esLibreReal && !esL26) ? 'shape-square' : 'shape-circle';
+                // Todos los cambios son cuadrados; sin cambio: libre=cuadrado, trabaja=círculo
+                let forma = data ? 'shape-square' : (esLibreReal ? 'shape-square' : 'shape-circle');
                 if (_calAnio === _anioActual) {
                     html += `<div class="d-cell ${clase} ${forma}"
                         onclick="handleDayClick(${d},${mIdx},'${uid}')"
