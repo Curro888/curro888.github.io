@@ -1,3 +1,7 @@
+
+
+
+ 
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -2079,9 +2083,9 @@
                 let clase = esLibreReal ? "is-free" : "is-work";
                 if ((start + d - 1) % 7 === 6) clase += " is-sun";
                 if (data) clase += " " + data.clase;
-                // b-l26: día libre que se trabaja -> mostrar como trabajo (círculo)
+                // b-l26: día libre que se trabaja -> mostrar como cuadrado naranja
                 const esL26 = data?.clase === 'b-l26';
-                if (esL26) { clase = "is-work b-l26"; }
+                if (esL26) { clase = "is-work b-l26"; forma = 'shape-square'; }
                 // Festivo: rojo fondo, negro si trabaja, blanco si libra
                 if (_esFestivo(d, mIdx + 1, _calAnio)) clase = esLibreReal ? "is-festivo-libre" : "is-festivo";
                 if (_calAnio === _anioActual && dbNotas[uid]?.[`${mIdx}_${d}`]) clase += " tiene-nota";
@@ -2569,10 +2573,66 @@
         });
     }
 
+    // Función mejorada para borrar L-26 con opciones
+    window._hmBorrarL26 = function(path, key) {
+        var opciones = confirm('¿Qué quieres borrar?\n\nOK = Borrar completamente el L-26\nCancelar = Borrar solo del calendario (mantener disponible)');
+        
+        if (opciones === true) {
+            // Borrar completamente del historial
+            db.ref(path).remove().then(function() {
+                _hmBadges();
+                if (document.getElementById('historial-modal').style.display !== 'none') {
+                    _hmCargar('generado');
+                }
+            });
+        } else {
+            // Borrar solo del calendario pero mantener el L-26 disponible
+            db.ref('historial2/' + miID + '/' + key).once('value').then(function(snap) {
+                var h = snap.val();
+                if (h && h.resuelto) {
+                    // Si está resuelto, quitar la resolución
+                    db.ref('historial2/' + miID + '/' + key + '/resuelto').remove().then(function() {
+                        // También borrar del calendario
+                        if (h.resuelto.diaLibre) {
+                            var partes = h.resuelto.diaLibre.split('/');
+                            var d = parseInt(partes[0]);
+                            var m = parseInt(partes[1]) - 1;
+                            db.ref('cambios/' + miID + '/' + m + '_' + d).remove();
+                        }
+                        _hmBadges();
+                        if (document.getElementById('historial-modal').style.display !== 'none') {
+                            _hmCargar('generado');
+                        }
+                    });
+                }
+            });
+        }
+    };
+
     function _hmBorrarL26PorFecha(fecha) {
         // Al borrar la marca L-26 del calendario, el L-26 del historial queda disponible
         // Solo actualizamos los badges, NO borramos el historial
         _hmBadges();
+    }
+
+    // Función para editar L-26
+    window._hmEditarL26 = function(key) {
+        db.ref('historial2/' + miID + '/' + key).once('value').then(function(snap) {
+            var h = snap.val();
+            if (!h) return;
+            
+            var nuevaNota = prompt('Editar nota de L-26:', h.nota || 'L-26');
+            if (nuevaNota === null) return;
+            
+            db.ref('historial2/' + miID + '/' + key).update({
+                nota: nuevaNota || 'L-26'
+            }).then(function() {
+                _hmBadges();
+                if (document.getElementById('historial-modal').style.display !== 'none') {
+                    _hmCargar('generado');
+                }
+            });
+        });
     }
 
     function _hmQuitarResolucionPendiente(fechaLibre) {
@@ -3508,11 +3568,11 @@
                         if (h.cobrado) estadoLabel = ' <span style="font-size:0.7rem;background:#f0fdf4;color:#166534;border-radius:6px;padding:1px 6px;font-weight:700;">Cobrado</span>';
                         else if (h.resuelto && h.resuelto.accion === 'librar') estadoLabel = ' <span style="font-size:0.7rem;background:#fff7ed;color:#c2410c;border-radius:6px;padding:1px 6px;font-weight:700;">Librado el '+h.resuelto.diaLibre+'</span>';
                         var path = 'historial2/'+miID+'/'+k;
-                        var btnDec = (!h.resuelto && !h.cobrado) ? '<button data-k="'+k+'" data-f="'+(h.fecha||'')+'" onclick="_gestionarL26(this)" style="margin-top:8px;width:100%;padding:9px;background:#f97316;color:white;border:none;border-radius:10px;font-weight:700;">Gestionar</button>' : '';
+                        var btnDec = (!h.resuelto && !h.cobrado) ? '<button data-k="'+k+'" data-f="'+(h.fecha||'')+'" onclick="_gestionarL26(this)" style="margin-top:8px;width:100%;padding:9px;background:#f97316;color:white;border:none;border-radius:10px;font-weight:700;cursor:pointer;">🔶 Resolver</button>' : '';
                         return '<div style="border:2px solid #f97316;border-radius:12px;padding:14px;margin-bottom:10px;background:#fff7ed;">' +
-                            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
                                 '<div style="font-weight:800;color:#c2410c;">🔶 '+(h.fecha||'—')+estadoLabel+'</div>' +
-                                _hmBtnBorrar(path) +
+                                '<div style="display:flex;gap:4px;">' + _hmBtnEditar(k,'l26') + '<button data-path="' + path + '" data-k="' + k + '" onclick="_hmBorrarL26(this.dataset.path, this.dataset.k)" style="background:#fee2e2;color:#ef4444;border:none;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;flex-shrink:0;cursor:pointer;">🗑️</button>' + '</div>' +
                             '</div>' +
                             btnDec +
                         '</div>';
