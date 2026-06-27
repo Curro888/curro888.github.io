@@ -1454,13 +1454,22 @@
         var d = diaSeleccionado.d, m = diaSeleccionado.mIdx;
         var fecha = d + '/' + (m+1);
         var ts = Date.now();
-        db.ref('historial2/' + miID + '/' + ts).set({
+        var updates = {};
+        updates['cambios/' + miID + '/' + m + '_' + d] = { texto: 'Sin Retribuir', clase: 'b-sinretribuir' };
+        updates['historial2/' + miID + '/' + ts] = {
             cat: 'sinretribuir',
             ts: ts,
             fecha: fecha,
             nota: '',
             clase: 'b-sinretribuir'
-        }).then(function() {
+        };
+        db.ref().update(updates).then(function() {
+            modoSeleccionActivo = false;
+            document.getElementById('selection-notice').style.display = 'none';
+            _hmBadges();
+            mostrarNotificacion('Dia sin retribuir agregado: ' + fecha);
+        });
+    }).then(function() {
             modoSeleccionActivo = false;
             document.getElementById('selection-notice').style.display = 'none';
             _hmBadges();
