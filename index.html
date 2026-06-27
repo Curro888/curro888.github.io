@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Planificación</title>
+    <title>Planificación 2026</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <link rel="manifest" href="manifest.json">
@@ -45,21 +45,6 @@
         .is-work { background: #f8fafc; color: #475569; }
         body.dark-mode .is-free { background: #4a2828; color: #fca5a5; }
         body.dark-mode .is-work { background: #2a3245; color: #a8b8cc; }
-        .is-festivo { background: #ef4444 !important; color: #000 !important; font-weight: 700; }
-        .d-cell { position: relative; }
-        .d-cell.tiene-nota::after {
-            content: '';
-            position: absolute;
-            top: 2px; right: 2px;
-            width: 8px; height: 8px;
-            border-radius: 2px;
-            background: #67e8f9;
-            border: 1px solid white;
-        }
-        body.dark-mode .d-cell.tiene-nota::after { border-color: #1a1a2e; background: #0891b2; }
-        .is-festivo-libre { background: #ef4444 !important; color: #fff !important; font-weight: 700; }
-        body.dark-mode .is-festivo { background: #dc2626 !important; color: #000 !important; }
-        body.dark-mode .is-festivo-libre { background: #dc2626 !important; color: #fff !important; }
         body.dark-mode #m-cal { background: rgba(20, 22, 40, 0.96); }
         body.dark-mode .cal-grid { background: transparent; }
         body.dark-mode .legend-container { background: #252840; }
@@ -94,17 +79,16 @@
         body.dark-mode .member-sub { color: var(--text) !important; }
         body.dark-mode [style*="color:#64748b"] { color: var(--text) !important; }
         body.dark-mode [style*="color: #64748b"] { color: var(--text) !important; }
-        body.dark-mode .b-inter       { background: #2a2000 !important; color: #fde68a !important; border: none !important; }
-        body.dark-mode .b-cambio-libre { background: #3b0f0f !important; color: #fca5a5 !important; border: none !important; }
-        body.dark-mode .b-pend        { background: #1e1040 !important; color: #c4b5fd !important; border: none !important; }
-        body.dark-mode .b-generado    { background: #2d0a1e !important; color: #f9a8d4 !important; border: none !important; }
-        body.dark-mode .b-vac         { background: #052e16 !important; color: #86efac !important; border: none !important; }
+        body.dark-mode .b-inter { border: 2px solid var(--yellow) !important; background: #2a2000 !important; color: #fde68a !important; }
+        body.dark-mode .b-cambio-libre { border: 2px solid var(--danger) !important; background: #3b0f0f !important; color: #fca5a5 !important; }
+        body.dark-mode .b-pend { border: 2px solid var(--primary) !important; background: #1e1040 !important; color: #c4b5fd !important; }
+        body.dark-mode .b-generado { border: 2px solid var(--pink) !important; background: #2d0a1e !important; color: #f9a8d4 !important; }
         .is-sun { text-decoration: underline; font-weight: 900; color: #000; }
-        .b-inter      { background: #fef08a !important; color: #854d0e !important; border: none !important; }
-        .b-cambio-libre { background: #fee2e2 !important; color: #991b1b !important; border: none !important; }
-        .b-pend       { background: #ede9fe !important; color: #5b21b6 !important; border: none !important; }
-        .b-vac        { background: #bbf7d0 !important; color: #166534 !important; border: none !important; }
-        .b-generado   { background: #fce7f3 !important; color: #be185d !important; border: none !important; }
+        .b-inter { border: 2px solid var(--yellow) !important; background: #fefce8 !important; color: #854d0e !important; }
+        .b-cambio-libre { border: 2px solid var(--danger) !important; background: #fff1f2 !important; color: var(--danger) !important; }
+        .b-pend { border: 2px solid var(--primary) !important; background: var(--white) !important; color: var(--primary) !important; }
+        .b-vac { border: 2px solid var(--success) !important; background: #f0fdf4 !important; color: #166534 !important; }
+        .b-generado { border: 2px solid var(--pink) !important; background: #fdf2f8 !important; color: #be185d !important; }
         .legend-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding: 12px; background: var(--surface2); border-radius: 12px; justify-content: center; }
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; padding: 4px; border-radius: 6px; }
         .legend-item:active { background: var(--border); }
@@ -130,7 +114,7 @@
         .menu-opt { padding: 15px; border-bottom: 1px solid var(--border); cursor: pointer; font-weight: 600; font-size: 0.9rem; color: var(--text); }
         .menu-opt:active { background: var(--surface2); }
 
-        #vac-modal, #report-modal, #confirm-modal, #nota-modal {
+        #vac-modal, #report-modal, #confirm-modal {
             display: none; position: fixed; inset: 0; background: rgba(30,27,75,0.6);
             z-index: 3000; align-items: center; justify-content: center; padding: 20px;
         }
@@ -170,14 +154,14 @@
 <body ontouchmove="handleGlobalTouchMove(event)">
 <div id="splash-screen">
     <div class="splash-logo">📅</div>
-    <div class="splash-title">Turnos <span id="anio-splash"></span></div>
+    <div class="splash-title">Turnos 2026</div>
     <div class="splash-sub">Cargando...</div>
 </div>
 
 <!-- ===== LOGIN ===== -->
 <div id="login-view" style="position:fixed; inset:0; background:#1e1b4b; display:flex; align-items:center; justify-content:center; z-index:9999; overflow-y:auto; padding: 20px 0;">
     <div style="background:var(--surface); padding:28px; border-radius:20px; text-align:center; width:90%; max-width:340px; border-bottom:5px solid var(--primary);">
-        <h2 style="color:var(--primary); margin:0 0 4px 0;">Planificación <span id="anio-titulo"></span></h2>
+        <h2 style="color:var(--primary); margin:0 0 4px 0;">Planificación 2026</h2>
         <p style="font-size:0.8rem; color:#64748b; margin-bottom:20px;">¿Cómo quieres acceder?</p>
 
         <!-- PASO -1: Elegir grupo guardado -->
@@ -226,8 +210,6 @@
                 <option value="">Selecciona tu turno</option>
                 <option value="73/27">🌙 N · 73/27</option>
                 <option value="80/20">🌙 N · 80/20</option>
-                <option value="80/20MT">☀️ 80/20 M/T</option>
-                <option value="73/27MT">☀️ 73/27 M/T</option>
             </select>
             <select id="grupoMiGrupo" class="input-app" style="font-size:1rem; margin:5px 0 10px 0;">
                 <option value="">Selecciona tu grupo de libres</option>
@@ -257,8 +239,6 @@
                 <option value="">Selecciona tu turno</option>
                 <option value="73/27">🌙 N · 73/27</option>
                 <option value="80/20">🌙 N · 80/20</option>
-                <option value="80/20MT">☀️ 80/20 M/T</option>
-                <option value="73/27MT">☀️ 73/27 M/T</option>
             </select>
             <select id="nuevoMiGrupo" class="input-app" style="font-size:1rem; margin:5px 0 10px 0;">
                 <option value="">Selecciona tu grupo de libres</option>
@@ -412,41 +392,20 @@
     </div>
 </div>
 
-<div id="nota-modal">
-    <div class="modal-box">
-        <h3 style="margin:0; color:var(--primary-dark);">📝 Mi nota</h3>
-        <p id="nota-info" style="font-size:0.8rem; color:#64748b; margin:10px 0;"></p>
-        <textarea id="nota-input" maxlength="250" placeholder="Escribe tu anotación..." oninput="document.getElementById('nota-contador').innerText = this.value.length + ' / 250'" style="width:100%; min-height:110px; padding:10px; border:1px solid var(--border); border-radius:10px; font-size:0.9rem; background:var(--surface); color:var(--text); box-sizing:border-box; resize:vertical; font-family:inherit;"></textarea>
-        <div id="nota-contador" style="text-align:right; font-size:0.72rem; color:#64748b; margin:4px 0 10px;">0 / 250</div>
-        <div style="display:flex; gap:10px;">
-            <button onclick="cerrarNotaModal()" style="flex:1; padding:12px; background:#f5f3ff; border:none; border-radius:10px; font-weight:bold; color:var(--primary);">Cancelar</button>
-            <button onclick="guardarMiNota()" style="flex:1; padding:12px; background:#06b6d4; color:white; border:none; border-radius:10px; font-weight:bold;">Guardar</button>
-        </div>
-    </div>
-</div>
-
 <div id="m-cal" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.9); z-index:100; overflow-y:auto; padding-top:env(safe-area-inset-top);">
     <div style="background:var(--surface); width:95%; max-width:1200px; margin:20px auto; border-radius:20px; padding:15px; position:relative;" id="m-cal-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h2 id="cal-target-name" style="margin:0; color:var(--primary-dark); font-size:1.2rem;"></h2>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <button onclick="cambiarAnioCalendario(-1)" style="background:var(--primary); color:white; border:none; width:34px; height:34px; border-radius:50%; font-size:1.1rem; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center;">‹</button>
-                <span id="cal-anio-label" style="font-size:1rem; font-weight:800; color:var(--primary-dark); min-width:42px; text-align:center;"></span>
-                <button onclick="cambiarAnioCalendario(1)" style="background:var(--primary); color:white; border:none; width:34px; height:34px; border-radius:50%; font-size:1.1rem; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center;">›</button>
-                <button onclick="cerrarCalendario()" style="background:var(--danger); color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:900; margin-left:4px;">Cerrar</button>
-            </div>
+            <button onclick="cerrarCalendario()" style="background:var(--danger); color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:900;">Cerrar</button>
         </div>
         <div class="legend-container">
-            <div class="legend-item"><div class="legend-box" style="background:#fee2e2;"></div><span>Libre</span></div>
-            <div class="legend-item"><div class="legend-box" style="background:#f8fafc; border-color:#cbd5e1;"></div><span>Trabaja</span></div>
-            <div class="legend-item"><div class="legend-box" style="background:#fef08a;"></div><span>C. Compañero</span></div>
-            <div class="legend-item"><div class="legend-box" style="background:#bbf7d0;"></div><span>Vacaciones</span></div>
-            <div class="legend-item"><div class="legend-box" style="background:#ede9fe;"></div><span>Pendiente</span></div>
-            <div class="legend-item" onclick="mostrarInformeLeyenda('b-generado','Generados')"><div class="legend-box" style="background:#fce7f3;"></div><span>Generado</span></div>
-            <div class="legend-item" onclick="mostrarInformeLeyenda('b-l26','L-26')"><div class="legend-box" style="background:#fed7aa;"></div><span>L-26</span></div>
-            <div class="legend-item"><div class="legend-box" style="background:#fee2e2;"></div><span>Libra (cambio)</span></div>
-            <div class="legend-item"><div class="legend-box" style="background:#67e8f9; border-radius:2px;"></div><span>📝 Nota</span></div>
-        </div>
+            <div class="legend-item" onclick="mostrarInformeLeyenda('is-free','Días Libres Base')"><div class="legend-box is-free"></div><span>Libre</span></div>
+            <div class="legend-item" onclick="mostrarInformeLeyenda('is-work','Días de Trabajo')"><div class="legend-box is-work"></div><span>Trabaja</span></div>
+            <div class="legend-item" onclick="mostrarInformeLeyenda('b-cambio-libre','Libras por Cambio')"><div class="legend-box b-cambio-libre"></div><span>Libras (x cambio)</span></div>
+            <div class="legend-item" onclick="mostrarInformeLeyenda('b-inter','Haces por Cambio')"><div class="legend-box b-inter"></div><span>Haces (x cambio)</span></div>
+            <div class="legend-item" onclick="mostrarInformeLeyenda('b-vac','Vacaciones')"><div class="legend-box b-vac"></div><span>Vacaciones</span></div>
+            <div class="legend-item" onclick="mostrarInformeLeyenda('b-pend','Pendientes')"><div class="legend-box b-pend"></div><span>Pendiente</span></div>
+            <div class="legend-item" onclick="mostrarInformeLeyenda('b-generado','Generados')"><div class="legend-box b-generado"></div><span>Generado</span></div>
         </div>
         <div class="cal-grid" id="m-grid"></div>
     </div>
@@ -472,8 +431,6 @@
         <div style="display:flex; gap:8px; margin-bottom:12px;">
             <button id="pg-tab-7327" onclick="setPanelTurno('73/27')" style="flex:1; padding:10px; border-radius:10px; border:2px solid var(--primary); background:var(--primary); color:white; font-weight:700; font-size:0.85rem;">🌙 73/27</button>
             <button id="pg-tab-8020" onclick="setPanelTurno('80/20')" style="flex:1; padding:10px; border-radius:10px; border:2px solid #ddd6fe; background:var(--surface2); color:var(--primary); font-weight:700; font-size:0.85rem;">🌙 80/20</button>
-            <button id="pg-tab-8020mt" onclick="setPanelTurno('80/20MT')" style="flex:1; padding:10px; border-radius:10px; border:2px solid #ddd6fe; background:var(--surface2); color:var(--primary); font-weight:700; font-size:0.85rem;">☀️ 80/20 M/T</button>
-            <button id="pg-tab-7327mt" onclick="setPanelTurno('73/27MT')" style="flex:1; padding:10px; border-radius:10px; border:2px solid #ddd6fe; background:var(--surface2); color:var(--primary); font-weight:700; font-size:0.85rem;">☀️ 73/27 M/T</button>
         </div>
         <!-- Navegación mes -->
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; background:var(--surface2); border-radius:12px; padding:8px 14px;">
@@ -533,94 +490,42 @@
 
     const mesesArr = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
-    // ===== CÁLCULO AUTOMÁTICO DE DÍAS LIBRES POR AÑO =====
-    // Patrón 73/27 NOCHE (ciclo de 15 semanas)
-    const _P7327 = [
-        [6,0],[5,6],[6,0],[1,2,3,4],[5,6],
-        [6,0],[5,6],[3,4],[6,0],[4,5,6],
-        [6,0],[4,5],[5,6],[6,0],[4,5]
-    ];
-    // Patrón 80/20 NOCHE (ciclo de 15 semanas)
-    const _P8020 = [
-        [5,6],[6,0],[5,6],[6,0],[1,2,3,4],
-        [5,6],[6,0],[5,6],[6,0],[3,4],
-        [4,5,6],[6,0],[5,6],[6,0],[4,5]
-    ];
-    // Patrón 73/27 MAÑANA-TARDE (ciclo de 15 semanas)
-    const _P7327MT = [
-        [6,0],[6,0],[6,0],[1,2,3,4],[6,0],
-        [6,0],[6,0],[3,4],[5,6,0],[6,0],
-        [6,0],[4,5],[6,0],[6,0],[4,5]
-    ];
-    // Patrón 80/20 MAÑANA-TARDE (ciclo de 15 semanas)
-    const _P8020MT = [
-        [6,0],[6,0],[6,0],[6,0],[1,2,3,4],
-        [6,0],[6,0],[6,0],[6,0],[3,4],
-        [5,6,0],[6,0],[6,0],[6,0],[4,5]
-    ];
+    const gruposLibres = {
+        "1":{0:[2,3,10,11,12,13,14,15,23,24,31],1:[1,6,7,11,12,21,22,26,27,28],2:[7,8,12,13,20,21,28,29],3:[2,3,11,12,17,18,25,26,27,28,29,30],4:[8,9,16,17,22,23,27,28],5:[6,7,11,12,13,20,21,25,26],6:[3,4,11,12,16,17,25,26,31],7:[1,8,9,10,11,12,13,21,22,29,30],8:[4,5,9,10,19,24,25,26],9:[3,4,8,9,16,17,24,25,29,30],10:[7,8,13,14,21,22,23,24,25,26],11:[4,5,12,13,18,19,23,24]},
+        "2":{0:[3,4,5,6,7,8,16,17,24,25,30,31],1:[4,5,14,15,19,20,21,28],2:[1,5,6,13,14,21,22,26,27],3:[4,5,10,11,18,19,20,21,22,23],4:[1,2,9,10,15,16,20,21,30,31],5:[4,5,6,13,14,18,19,26,27],6:[4,5,9,10,18,19,24,25],7:[1,2,3,4,5,6,14,15,22,23,28,29],8:[2,3,12,13,17,18,19,26,27],9:[1,2,9,10,17,18,22,23,31],10:[1,6,7,14,15,16,17,18,19,27,28],11:[5,6,11,12,16,17,26,27,31]},
+        "3":{0:[1,9,10,17,18,23,24,28,29],1:[7,8,12,13,14,21,22,26,27],2:[6,7,14,15,19,20,28,29],3:[3,4,11,12,13,14,15,16,24,25],4:[2,3,8,9,13,14,23,24,28,29,30],5:[6,7,11,12,19,20,27,28],6:[2,3,11,12,17,18,25,26,27,28,29,30],7:[7,8,15,16,21,22,26,27],8:[5,6,10,11,12,19,20,24,25],9:[2,3,10,11,15,16,24,25,30,31],10:[7,8,9,10,11,12,20,21,28,29],11:[4,5,9,10,19,20,24,25,26]},
+        "4":{0:[2,3,10,11,16,17,21,22,31],1:[1,5,6,7,14,15,19,20],2:[7,8,12,13,21,22,27,28],3:[4,5,6,7,8,9,17,18,25,26],4:[1,2,6,7,16,17,21,22,23,30,31],5:[4,5,12,13,20,21,25,26],6:[4,5,10,11,18,19,20,21,22,23,31],7:[1,8,9,14,15,19,20,29,30],8:[3,4,5,12,13,17,18,25,26],9:[3,4,8,9,17,18,23,24,31],10:[1,2,3,4,5,13,14,21,22,27,28],11:[2,3,12,13,17,18,19,26,27,31]},
+        "5":{0:[3,4,9,10,14,15,24,25,29,30,31],1:[7,8,12,13,20,21,28],2:[1,5,6,14,15,20,21,28,29,30,31],3:[1,2,10,11,18,19,24,25,29,30],4:[9,10,14,15,16,23,24,28,29],5:[5,6,13,14,18,19,27,28],6:[3,4,11,12,13,14,15,16,24,25],7:[1,2,7,8,12,13,22,23,27,28,29],8:[5,6,10,11,18,19,26,27],9:[1,2,10,11,16,17,24,25,26,27,28,29],10:[6,7,14,15,20,21,25,26],11:[5,6,10,11,12,19,20,24,25]},
+        "6":{0:[2,3,7,8,17,18,22,23,24,31],1:[1,5,6,13,14,21,22,26,27],2:[7,8,13,14,21,22,23,24,25,26],3:[3,4,11,12,17,18,22,23],4:[2,3,7,8,9,16,17,21,22,29,30],5:[6,7,11,12,20,21,26,27],6:[4,5,6,7,8,9,17,18,25,26,31],7:[1,5,6,15,16,20,21,22,29,30],8:[3,4,11,12,19,20,24,25],9:[3,4,9,10,17,18,19,20,21,22,30,31],10:[7,8,13,14,18,19,28,29],11:[3,4,5,12,13,17,18,25,26]},
+        "7":{0:[1,10,11,15,16,17,24,25,29,30],1:[6,7,14,15,19,20,28],2:[1,6,7,14,15,16,17,18,19,27,28],3:[4,5,10,11,15,16,17,25,26,30],4:[1,2,9,10,14,15,22,23,30,31],5:[4,5,13,14,19,20,27,28,29,30],6:[1,2,10,11,18,19,24,25,29,30],7:[8,9,13,14,15,22,23,27,28],8:[4,5,12,13,17,18,26,27],9:[2,3,10,11,12,13,14,15,23,24,31],10:[1,6,7,11,12,21,22,26,27,28],11:[5,6,10,11,18,19,26,27,31]},
+        "8":{0:[3,4,8,9,10,17,18,22,23,30,31],1:[7,8,12,13,21,22,27,28],2:[7,8,9,10,11,12,20,21,28,29],3:[3,4,8,9,18,19,23,24,25],4:[2,3,7,8,15,16,23,24,28,29],5:[6,7,12,13,20,21,22,23,24,25],6:[3,4,11,12,17,18,22,23],7:[1,2,6,7,8,15,16,20,21,28,29],8:[5,6,10,11,19,20,25,26],9:[3,4,5,6,7,8,16,17,24,25,30,31],10:[4,5,14,15,19,20,21,28,29],11:[3,4,11,12,19,20,24,25]},
+        "9":{0:[1,2,3,10,11,15,16,23,24,31],1:[1,5,6,14,15,20,21,28],2:[1,2,3,4,5,13,14,21,22,27,28],3:[1,2,11,12,16,17,18,25,26,30],4:[1,8,9,16,17,22,23,30,31],5:[5,6,13,14,15,16,17,18,26,27],6:[4,5,10,11,15,16,25,26,30,31],7:[1,8,9,13,14,21,22,29,30],8:[3,4,12,13,18,19,26,27,28,29,30],9:[1,9,10,17,18,23,24,28,29],10:[7,8,12,13,14,21,22,26,27],11:[4,5,12,13,17,18,26,27]},
+        "10":{0:[3,4,8,9,16,17,24,25,29,30],1:[7,8,13,14,21,22,23,24,25,26],2:[6,7,14,15,20,21,25,26],3:[4,5,9,10,11,18,19,23,24],4:[1,2,9,10,14,15,23,24,29,30],5:[6,7,8,9,10,11,19,20,27,28],6:[3,4,8,9,18,19,23,24,25],7:[1,2,6,7,14,15,22,23,27,28],8:[5,6,11,12,19,20,21,22,23,24],9:[2,3,10,11,16,17,21,22,31],10:[1,5,6,7,14,15,19,20,27,28],11:[5,6,10,11,19,20,25,26]},
+        "11":{0:[1,2,9,10,17,18,22,23,31],1:[1,6,7,14,15,16,17,18,19,27,28],2:[7,8,13,14,18,19,28,29],3:[2,3,4,11,12,16,17,24,25],4:[2,3,7,8,16,17,22,23,30,31],5:[1,2,3,4,12,13,20,21,26,27],6:[1,2,11,12,16,17,18,25,26,30,31],7:[7,8,15,16,20,21,29,30],8:[4,5,12,13,14,15,16,17,25,26],9:[2,4,9,10,14,15,24,25,29,30,31],10:[7,8,12,13,20,21,28,29],11:[3,4,12,13,18,19,26,27,28,29,30,31]},
+        "12":{0:[2,3,10,11,15,16,24,25,30,31],1:[7,8,9,10,11,12,20,21,28],2:[1,6,7,11,12,21,22,26,27,28],3:[4,5,9,10,17,18,25,26,30],4:[1,9,10,15,16,23,24,25,26,27,28],5:[5,6,13,14,19,20,24,25],6:[4,5,9,10,11,18,19,23,24,31],7:[1,8,9,13,14,22,23,28,29],8:[5,6,7,8,9,10,18,19,26,27],9:[2,3,7,8,17,18,22,23,24,31],10:[1,5,6,13,14,21,22,26,27],11:[5,6,11,12,19,20,21,22,23,24]},
+        "13":{0:[3,4,8,9,17,18,23,24,31],1:[1,2,3,4,5,13,14,21,22,27,28],2:[4,5,14,15,19,20,21,28,29],3:[2,3,10,11,18,19,23,24],4:[2,3,8,9,16,17,18,19,20,21,29,30],5:[6,7,12,13,17,18,27,28],6:[2,3,4,11,12,16,17,24,25],7:[1,2,6,7,15,16,21,22,29,30],8:[1,2,3,11,12,19,20,25,26,30],9:[1,10,11,15,16,17,24,25,29,30],10:[6,7,14,15,19,20,28,29],11:[4,5,12,13,14,15,16,17,25,26]},
+        "14":{0:[1,2,10,11,16,17,24,25,26,27,28,29],1:[6,7,14,15,20,21,25,26],2:[7,8,12,13,14,21,22,26,27],3:[3,4,11,12,16,17,25,26],4:[1,2,9,10,11,12,13,14,22,23,30,31],5:[5,6,10,11,20,21,25,26,27],6:[4,5,9,10,17,18,25,26,30,31],7:[8,9,14,15,22,23,24,25,26,27],8:[4,5,12,13,18,19,23,24],9:[3,4,8,9,10,17,18,22,23,30,31],10:[7,8,12,13,21,22,27,28],11:[5,6,7,8,9,10,18,19,26,27]},
+        "15":{0:[3,4,9,10,17,18,19,20,21,22,30,31],1:[7,8,13,14,18,19,28],2:[1,5,6,7,14,15,19,20,27,28],3:[4,5,9,10,18,19,24,25],4:[2,3,4,5,6,7,15,16,23,24,29,30],5:[3,4,13,14,18,19,20],6:[2,3,10,11,18,19,23,24],7:[1,2,7,8,15,16,17,18,19,20,28,29],8:[5,6,11,12,16,17,26,27],9:[1,2,3,10,11,15,16,23,24,31],10:[1,5,6,14,15,20,21,28,29,30],11:[1,2,3,11,12,19,20,25,26,30,31]}
+    };
 
-    function _isoWeekMonday(year, w) {
-        const j4 = new Date(year, 0, 4), dow = j4.getDay() || 7;
-        const mon = new Date(j4);
-        mon.setDate(j4.getDate() - (dow - 1) + (w - 1) * 7);
-        return mon;
-    }
-
-    function _semanasISO(y) {
-        // Tiene 53 semanas si el 1-ene o 31-dic cae en jueves
-        return (new Date(y,0,1).getDay()===4 || new Date(y,11,31).getDay()===4) ? 53 : 52;
-    }
-
-    function _calcGrupos(year, patron, offsetBase, anioBase) {
-        // Calcular el offset del grupo 1 para el año solicitado
-        let off = offsetBase;
-        if (year > anioBase) {
-            for (let y = anioBase; y < year; y++)
-                off = ((off - 1 + _semanasISO(y)) % 15) + 1;
-        } else if (year < anioBase) {
-            for (let y = anioBase; y > year; y--)
-                off = ((off - 1 - (_semanasISO(y-1) % 15) + 150) % 15) + 1;
-        }
-        const grupos = {};
-        for (let g = 1; g <= 15; g++) {
-            const base = ((off - 1 + (g - 1)) % 15);
-            const L = {};
-            for (let m = 0; m < 12; m++) L[m] = [];
-            // Días de enero que pertenecen a la semana ISO del año anterior
-            // Solo aplica si el lunes de sem ISO 1 cae dentro del año (ej 2027: empieza el 4 ene)
-            // Si cae en dic del año anterior (ej 2025: empieza el 30 dic 2024), el bucle ya los cubre
-            const _lun1 = _isoWeekMonday(year, 1);
-            if (_lun1.getFullYear() === year && _lun1.getDate() > 1) {
-                const pAnt = patron[((base - 1 + 150) % 15)];
-                for (let d = 1; d < _lun1.getDate(); d++) {
-                    const f = new Date(year, 0, d);
-                    if (f.getFullYear() !== year) continue;
-                    if (pAnt.includes(f.getDay()) && !L[0].includes(d)) L[0].push(d);
-                }
-            }
-            for (let w = 1; w <= 53; w++) {
-                const pSem = patron[((base + (w-1)) % 15)];
-                const lun = _isoWeekMonday(year, w);
-                for (let d = 0; d < 7; d++) {
-                    const f = new Date(lun); f.setDate(lun.getDate() + d);
-                    if (f.getFullYear() !== year) continue;
-                    const dow = f.getDay(), mes = f.getMonth(), dia = f.getDate();
-                    if (pSem.includes(dow) && !L[mes].includes(dia)) L[mes].push(dia);
-                }
-            }
-            for (let m = 0; m < 12; m++) L[m].sort((a,b)=>a-b);
-            grupos[String(g)] = L;
-        }
-        return grupos;
-    }
-
-    // Año base de referencia: 2026, offset grupo1 = 2 para ambos turnos
-    const _ANIO_BASE = 2026, _OFF_BASE = 2;
-    const _anioActual = new Date().getFullYear();
-    const gruposLibres      = _calcGrupos(_anioActual, _P7327,   _OFF_BASE, _ANIO_BASE);
-    const gruposLibres8020  = _calcGrupos(_anioActual, _P8020,   _OFF_BASE, _ANIO_BASE);
-    const gruposLibres8020MT= _calcGrupos(_anioActual, _P8020MT, _OFF_BASE, _ANIO_BASE);
-    const gruposLibres7327MT = _calcGrupos(_anioActual, _P7327MT, _OFF_BASE, _ANIO_BASE);
+    // Grupos libres sistema 80/20 Noche (15 grupos)
+    const gruposLibres8020 = {
+        "1":{0:[3,4,9,10,17,18,19,20,21,22,30,31],1:[7,8,13,14,21,22,25,26],2:[5,6,7,14,15,20,21,28,29],3:[2,3,10,11,18,19,24,25],4:[2,3,4,5,6,7,15,16,23,24,29,30],5:[6,7,10,11,18,19,20,27,28],6:[3,4,11,12,16,17,24,25],7:[1,2,7,8,15,16,17,18,19,20,28,29],8:[5,6,11,12,19,20,23,24],9:[1,2,3,10,11,16,17,24,25,29,30],10:[6,7,14,15,20,21,28,29,30],11:[1,2,3,10,12,19,20,25,26]},
+        "2":{0:[2,3,10,11,12,13,14,15,23,24,31],1:[1,6,7,14,15,18,19,26,27,28],2:[7,8,13,14,21,22,26,27],3:[3,4,11,12,17,18,25,26,27,28,29,30],4:[8,9,16,17,22,23,30,31],5:[3,4,11,12,13,20,21,26,27],6:[4,5,9,10,17,18,25,26,31],7:[1,8,9,10,11,12,13,21,22,29,30],8:[4,5,12,13,16,17,24,25,26],9:[3,4,9,10,17,18,22,23,30,31],10:[7,8,13,14,21,22,23,24,25,26],11:[4,5,12,13,18,19,26,27,30,31]},
+        "3":{0:[3,4,5,6,7,8,16,17,24,25,30,31],1:[7,8,11,12,19,20,21,28],2:[1,6,7,14,15,19,20,27,28],3:[4,5,10,11,18,19,20,21,22,23],4:[1,2,9,10,15,16,23,24,27,28],5:[4,5,6,13,14,19,20,27,28],6:[2,3,10,11,18,19,24,25],7:[1,2,3,4,5,6,14,15,22,23,28,29],8:[5,6,9,10,17,18,19,26,27],9:[2,3,10,11,15,16,23,24,31],10:[1,6,7,14,15,16,17,18,19,27,28],11:[5,6,11,12,19,20,23,24,31]},
+        "4":{0:[1,9,10,17,18,23,24,31],1:[1,4,5,12,13,14,21,22,27,28],2:[7,8,12,13,20,21,28,29],3:[3,4,11,12,13,14,15,16,24,25],4:[2,3,8,9,16,17,20,21,28,29,30],5:[6,7,12,13,20,21,25,26],6:[3,4,11,12,17,18,25,26,27,28,29,30],7:[7,8,15,16,21,22,29,30],8:[2,3,10,11,12,19,20,25,26],9:[3,4,8,9,16,17,24,25,30,31],10:[7,8,9,10,11,12,20,21,28,29],11:[4,5,12,13,16,17,24,25,26]},
+        "5":{0:[2,3,10,11,16,17,24,25,28,29],1:[5,6,7,14,15,20,21,28],2:[1,5,6,13,14,21,22,27,28],3:[4,5,6,7,8,9,17,18,25,26],4:[1,2,9,10,13,14,21,22,23,30,31],5:[5,6,13,14,18,19,26,27],6:[4,5,10,11,18,19,20,21,22,23,31],7:[1,8,9,14,15,22,23,26,27],8:[3,4,5,12,13,18,19,26,27],9:[1,2,9,10,17,18,23,24,31],10:[1,2,3,4,5,13,14,21,22,27,28],11:[5,6,9,10,17,18,19,26,27]},
+        "6":{0:[3,4,9,10,17,18,21,22,29,30,31],1:[7,8,13,14,21,22,26,27],2:[6,7,14,15,20,21,28,29,30,31],3:[1,2,10,11,18,19,24,25],4:[2,3,6,7,14,15,16,23,24,29,30],5:[6,7,11,12,19,20,27,28],6:[3,4,11,12,13,14,15,16,24,25],7:[1,2,7,8,15,16,19,20,27,28,29],8:[5,6,11,12,19,20,24,25],9:[2,3,10,11,16,17,24,25,26,27,28,29],10:[6,7,14,15,20,21,28,29],11:[2,3,10,11,12,19,20,25,26]},
+        "7":{0:[2,3,10,11,14,15,22,23,24,31],1:[1,6,7,14,15,19,20,27,28],2:[7,8,13,14,21,22,23,24,25,26],3:[3,4,11,12,17,18,25,26,29,30],4:[7,8,9,16,17,22,23,30,31],5:[4,5,12,13,20,21,26,27],6:[4,5,6,7,8,9,17,18,25,26,31],7:[1,8,9,12,13,20,21,22,29,30],8:[4,5,12,13,17,18,25,26],9:[3,4,9,10,17,18,19,20,21,22,30,31],10:[7,8,13,14,21,22,25,26],11:[3,4,5,12,13,18,19,26,27,31]},
+        "8":{0:[3,4,7,8,15,16,17,24,25,30,31],1:[7,8,12,13,20,21,28],2:[1,6,7,14,15,16,17,18,19,27,28],3:[4,5,10,11,18,19,22,23,30],4:[1,2,9,10,15,16,23,24,28,29],5:[5,6,13,14,19,20,27,28,29,30],6:[1,2,10,11,18,19,24,25],7:[1,2,5,6,13,14,15,22,23,28,29],8:[5,6,10,11,18,19,26,27],9:[2,3,10,11,12,13,14,15,23,24,31],10:[1,6,7,14,15,18,19,26,27,28],11:[5,6,11,12,19,20,24,25]},
+        "9":{0:[1,8,9,10,17,18,23,24,31],1:[1,5,6,13,14,21,22,27,28],2:[7,8,9,10,11,12,20,21,28,29],3:[3,4,11,12,15,16,23,24,25],4:[2,3,8,9,16,17,21,22,29,30],5:[6,7,12,13,20,21,22,23,24,25],6:[3,4,11,12,17,18,25,26,29,30],7:[6,7,8,15,16,21,22,29,30],8:[3,4,11,12,19,20,25,26],9:[3,4,5,6,7,8,16,17,24,25,30,31],10:[7,8,11,12,19,20,21,28,29],11:[4,5,12,13,17,18,25,26]},
+        "10":{0:[1,2,3,10,11,16,17,24,25,29,30],1:[6,7,14,15,20,21,28],2:[1,2,3,4,5,13,14,21,22,27,28],3:[4,5,8,9,16,17,18,25,26],4:[1,2,9,10,14,15,22,23,30,31],5:[5,6,13,14,15,16,17,18,26,27],6:[4,5,10,11,18,19,22,23,30,31],7:[1,8,9,14,15,22,23,27,28],8:[4,5,12,13,18,19,26,27,28,29,30],9:[1,9,10,17,18,23,24,31],10:[1,4,5,12,13,14,21,22,27,28],11:[5,6,10,11,18,19,26,27]},
+        "11":{0:[3,4,9,10,17,18,22,23,30,31],1:[7,8,13,14,21,22,23,24,25,26],2:[6,7,14,15,20,21,28,29],3:[1,2,9,10,11,18,19,24,25],4:[2,3,7,8,15,16,23,24,29,30],5:[6,7,8,9,10,11,19,20,27,28],6:[3,4,11,12,15,16,23,24,25],7:[1,2,7,8,15,16,20,21,28,29],8:[5,6,11,12,19,20,21,22,23,24],9:[2,3,10,11,16,17,24,25,28,29],10:[5,6,7,14,15,20,21,28,29],11:[3,4,11,12,19,20,25,26]},
+        "12":{0:[2,3,10,11,15,16,23,24,31],1:[1,6,7,14,15,16,17,18,19,27,28],2:[7,8,13,14,21,22,25,26],3:[2,3,4,11,12,17,18,25,26,30],4:[1,8,9,16,17,22,23,30,31],5:[1,2,3,4,12,13,20,21,26,27],6:[4,5,8,9,16,17,18,25,26,31],7:[1,8,9,13,14,21,22,29,30],8:[4,5,12,13,14,15,16,17,25,26],9:[3,4,9,10,17,18,21,22,29,30,31],10:[7,8,13,14,21,22,26,27],11:[4,5,12,13,18,19,26,27,28,29,30,31]},
+        "13":{0:[3,4,8,9,16,17,24,25,30,31],1:[7,8,9,10,11,12,20,21,28],2:[1,6,7,14,15,18,19,26,27,28],3:[4,5,10,11,18,19,23,24],4:[1,2,9,10,15,16,23,24,25,26,27,28],5:[5,6,13,14,19,20,27,28],6:[1,2,9,10,11,18,19,24,25],7:[1,2,6,7,14,15,22,23,28,29],8:[5,6,7,8,9,10,18,19,26,27],9:[2,3,10,11,14,15,22,23,24,31],10:[1,6,7,14,15,19,20,27,28],11:[5,6,11,12,19,20,21,22,23,24]},
+        "14":{0:[1,2,9,10,17,18,23,24,31],1:[1,2,3,4,5,13,14,21,22,27,28],2:[7,8,11,12,19,20,21,28,29],3:[3,4,11,12,16,17,24,25],4:[2,3,8,9,16,17,18,19,20,21,29,30],5:[6,7,12,13,20,21,24,25],6:[2,3,4,11,12,17,18,25,26,30,31],7:[7,8,15,16,21,22,29,30],8:[1,2,3,11,12,19,20,25,26],9:[3,4,7,8,15,16,17,24,25,30,31],10:[7,8,12,13,20,21,28,29],11:[4,5,12,13,14,15,16,17,25,26]},
+        "15":{0:[2,3,10,11,16,17,24,25,26,27,28,29],1:[6,7,14,15,20,21,28],2:[1,4,5,12,13,14,21,22,27,28],3:[4,5,9,10,17,18,25,26],4:[1,2,9,10,11,12,13,14,22,23,30,31],5:[5,6,13,14,17,18,25,26,27],6:[4,5,10,11,18,19,23,24,31],7:[1,8,9,14,15,22,23,24,25,26,27],8:[4,5,12,13,18,19,26,27,30],9:[1,8,9,10,17,18,23,24,31],10:[1,5,6,13,14,21,22,27,28],11:[5,6,7,8,9,10,18,19,26,27]}
+    };
 
     // ===== ESCUCHA FIREBASE EN TIEMPO REAL =====
     let listenerCambios = null, listenerSolicitudes = null;
@@ -986,7 +891,6 @@
         }
         if (modoGrupo) {
             document.getElementById('dmenu-editar-grupo').style.display = 'block';
-
             document.getElementById('dmenu-companeros').style.display = 'none';
             document.getElementById('dmenu-chat').style.display = 'block';
             document.getElementById('dmenu-stats').style.display = 'block';
@@ -1000,124 +904,7 @@
         }
         iniciarListeners();
         renderList();
-        if (modoGrupo) { iniciarPresencia(); iniciarListenerLeidos(); iniciarListenerNotas(miID); }
-        _checkFestivos();
-    }
-
-    // ===== FESTIVOS MADRID 2026 =====
-    var _FESTIVOS_2026 = [
-        { fecha: '1/1',   nombre: 'Año Nuevo' },
-        { fecha: '6/1',   nombre: 'Epifanía del Señor' },
-        { fecha: '2/4',   nombre: 'Jueves Santo' },
-        { fecha: '3/4',   nombre: 'Viernes Santo' },
-        { fecha: '1/5',   nombre: 'Fiesta del Trabajo' },
-        { fecha: '2/5',   nombre: 'Fiesta de la Comunidad de Madrid' },
-        { fecha: '15/5',  nombre: 'San Isidro Labrador' },
-        { fecha: '15/8',  nombre: 'Asunción de la Virgen' },
-        { fecha: '12/10', nombre: 'Fiesta Nacional de España' },
-        { fecha: '2/11',  nombre: 'Traslado de Todos los Santos' },
-        { fecha: '9/11',  nombre: 'Nuestra Señora de la Almudena' },
-        { fecha: '7/12',  nombre: 'Traslado del Día de la Constitución' },
-        { fecha: '8/12',  nombre: 'Inmaculada Concepción' },
-        { fecha: '25/12', nombre: 'Natividad del Señor' }
-    ];
-
-    function _esFestivo(dia, mes, anio) {
-        // Solo marcar festivos en el año actual (2026)
-        // Para años futuros los festivos se añadirán cuando se conozcan
-        if (anio && anio !== _ANIO_BASE) return false;
-        return _FESTIVOS_2026.some(function(f) {
-            var parts = f.fecha.split('/');
-            return parseInt(parts[0]) === dia && parseInt(parts[1]) === mes;
-        });
-    }
-
-
-
-    // Función de limpieza oculta - usar desde consola: limpiarTodosFestivos()
-    window._borrarItemGen = function(btn) {
-        if (!confirm('¿Borrar este registro y su marca del calendario?')) return;
-        var key = btn.getAttribute('data-gk');
-        var mIdx = btn.getAttribute('data-gmIdx');
-        var d = btn.getAttribute('data-gd');
-        var updates = {};
-        updates['historial2/' + miID + '/' + key] = null;
-        if (mIdx !== '' && d !== '') updates['cambios/' + miID + '/' + mIdx + '_' + d] = null;
-        db.ref().update(updates).then(function() {
-            _hmBadges();
-            if (typeof _hmCargar === 'function') _hmCargar(_hmCat);
-        });
-    };
-    window._gestionarL26 = function(btn) {
-        _abrirDecisionL26(btn.getAttribute('data-k'), btn.getAttribute('data-f'));
-    };
-    window.limpiarTodosFestivos = function() {
-        if (!db) { alert('Debes estar conectado'); return; }
-        const fechas = ['1/1','6/1','2/4','3/4','1/5','2/5','15/5'];
-        db.ref('historial2').once('value').then(function(snap) {
-            const updates = {};
-            let total = 0;
-            snap.forEach(function(userSnap) {
-                userSnap.forEach(function(child) {
-                    const h = child.val();
-                    if (h && h.cat === 'generado' && h.subtipo === 'festivo' && fechas.includes(h.fecha)) {
-                        updates['historial2/' + userSnap.key + '/' + child.key] = null;
-                        total++;
-                    }
-                });
-            });
-            if (Object.keys(updates).length > 0) {
-                db.ref().update(updates).then(function() {
-                    alert('✅ Borrados ' + total + ' festivos de todos los usuarios.');
-                });
-            } else {
-                alert('No hay festivos para borrar.');
-            }
-        });
-    };
-
-    function _checkFestivos() {
-        if (!miID) return;
-        var hoy = new Date();
-        // Solo generar festivos del año actual, nunca de años futuros
-        if (hoy.getFullYear() !== _ANIO_BASE) return;
-        var festivosHoy = [];
-        _FESTIVOS_2026.forEach(function(f) {
-            var parts = f.fecha.split('/');
-            var dia = parseInt(parts[0]), mes = parseInt(parts[1]);
-            var fechaFestivo = new Date(_ANIO_BASE, mes - 1, dia);
-            // Solo los que ya han llegado (fecha <= hoy)
-            if (fechaFestivo <= hoy) festivosHoy.push(f);
-        });
-        if (!festivosHoy.length) return;
-
-        db.ref('historial2/' + miID).once('value').then(function(snap) {
-            var existentes = {};
-            snap.forEach(function(child) {
-                var h = child.val();
-                if (h && h.cat === 'generado' && h.subtipo === 'festivo') {
-                    existentes[h.fecha] = true;
-                }
-            });
-            var updates = {};
-            var base = Date.now();
-            festivosHoy.forEach(function(f, idx) {
-                if (!existentes[f.fecha]) {
-                    var key = base + idx;
-                    updates['historial2/' + miID + '/' + key] = {
-                        cat: 'generado',
-                        subtipo: 'festivo',
-                        ts: key,
-                        fecha: f.fecha,
-                        nota: f.nombre,
-                        esLibre: false
-                    };
-                }
-            });
-            if (Object.keys(updates).length > 0) {
-                db.ref().update(updates).then(function() { _hmBadges(); });
-            }
-        });
+        if (modoGrupo) { iniciarPresencia(); iniciarListenerLeidos(); }
     }
 
     function toggleMenu() {
@@ -1138,14 +925,13 @@
     });
 
     // ===== MODO PICK DIA (para generado y pendiente) =====
-    var _modoPickDia = null; // 'generado' | 'pendiente' | 'convenio'
+    var _modoPickDia = null; // 'generado' | 'pendiente'
     var _pickGenKey = null, _pickGenFecha = null;
     var _pickPendKey = null, _pickPendFecha = null;
 
     function _activarPickDia(modo, key, fecha) {
         _modoPickDia = modo;
-        if (modo === 'generado' || modo === 'l26') { _pickGenKey = key; _pickGenFecha = fecha; }
-        else if (modo === 'convenio') { _pickPendKey = key; _pickPendFecha = fecha; }
+        if (modo === 'generado') { _pickGenKey = key; _pickGenFecha = fecha; }
         else { _pickPendKey = key; _pickPendFecha = fecha; }
         // Cerrar modales y abrir calendario del usuario
         document.getElementById('modal-generado').style.display = 'none';
@@ -1163,23 +949,6 @@
         var fecha = d + '/' + (mIdx+1);
         if (_modoPickDia === 'generado') {
             _confirmarPickGenerado(d, mIdx, fecha);
-        } else if (_modoPickDia === 'l26') {
-            db.ref('cambios/' + miID + '/' + mIdx + '_' + d).set({
-                texto: 'Libras (por L-26 ' + _pickGenFecha + ')',
-                clase: 'b-cambio-libre'
-            }).then(function() {
-                db.ref('historial2/' + miID + '/' + _pickGenKey).update({
-                    resuelto: { accion: 'librar', diaLibre: fecha }
-                });
-            });
-            _desactivarPickDia();
-            cerrarCalendario();
-            setTimeout(function() {
-                abrirHistorial();
-                abrirCategoria('generado');
-            }, 300);
-        } else if (_modoPickDia === 'convenio') {
-            _confirmarPickConvenio(d, mIdx, fecha);
         } else if (_modoPickDia === 'pendiente') {
             _confirmarPickPendiente(d, mIdx, fecha);
         }
@@ -1228,24 +997,7 @@
         }, 300);
     }
 
-    function _confirmarPickConvenio(d, mIdx, fechaLibre) {
-        var key = _pickPendKey;
-        db.ref('cambios/' + miID + '/' + mIdx + '_' + d).set({
-            texto: 'Libras (por convenio)',
-            clase: 'b-cambio-libre'
-        }).then(function() {
-            if (key) {
-                db.ref('historial2/' + miID + '/' + key).update({
-                    resuelto: { accion: 'libre', diaComp: fechaLibre }
-                });
-            }
-        });
-        cerrarCalendario();
-        setTimeout(function() {
-            abrirHistorial();
-            abrirCategoria('generado');
-        }, 300);
-    }
+    // ===== GENERADO =====
     var _genDia = null, _genMes = null;
 
     function _abrirModalGenerado() {
@@ -1371,62 +1123,7 @@
         if (typeof _hmCargar === 'function' && _hmCat === 'generado') _hmCargar('generado');
     }
 
-    
-    // ===== L-26 (días libres trabajados) =====
-    function _abrirModalL26() {
-        cerrarDesplegables();
-        _genDia = diaSeleccionado.d;
-        _genMes = diaSeleccionado.mIdx;
-        var fecha = _genDia + '/' + (_genMes+1);
-        // Guardar en historial2 como cat='l26'
-        var key = Date.now();
-        var updates = {};
-        updates['historial2/' + miID + '/' + key] = {
-            cat: 'l26',
-            ts: key,
-            fecha: fecha,
-            nota: 'L-26',
-            esLibre: false
-        };
-        // Marcar en el calendario
-        updates['cambios/' + miID + '/' + _genMes + '_' + _genDia] = {
-            texto: 'L-26',
-            clase: 'b-l26'
-        };
-        db.ref().update(updates).then(function() {
-            _hmBadges();
-        });
-    }
-
-    function _abrirDecisionL26(key, fecha) {
-        document.getElementById('mgen-fecha').textContent = '🔶 L-26: ' + fecha;
-        document.getElementById('mgen-key').value = key;
-        document.getElementById('mgen-fecha-val').value = fecha;
-        document.getElementById('mgen-librar-wrap').style.display = 'none';
-        document.getElementById('mgen-dia-libre').value = '';
-        var lista = document.getElementById('mgen-lista');
-        if (lista) lista.innerHTML = '';
-        document.getElementById('modal-generado-decision').style.display = 'flex';
-        _onModalOpen();
-    }
-
-    function _elegirL26(opcion) {
-        var key = document.getElementById('mgen-key').value;
-        var fecha = document.getElementById('mgen-fecha-val').value;
-        if (opcion === 'cobrar') {
-            db.ref('historial2/' + miID + '/' + key).update({
-                cobrado: true,
-                resuelto: { accion: 'cobrado', fecha: new Date().toLocaleDateString('es') }
-            });
-            document.getElementById('modal-generado-decision').style.display = 'none';
-            if (typeof _hmCargar === 'function' && _hmCat === 'l26') _hmCargar('l26');
-        } else {
-            document.getElementById('modal-generado-decision').style.display = 'none';
-            _activarPickDia('l26', key, fecha);
-        }
-    }
-
-    // ===== MODAL CAMBIO PROPIO =====
+        // ===== MODAL CAMBIO PROPIO =====
     var _cpTipoPrimerDia = null;
 
     function _abrirModalCambioPropio() {
@@ -1662,12 +1359,7 @@
         });
     }
 
-
     function cerrarSesion() {
-        // Borrar presencia inmediatamente al cerrar sesión
-        if (miID && grupoActual) {
-            db.ref(`presencia/${grupoActual}/${miID}`).remove();
-        }
         if (listenerCambios) { listenerCambios.off(); listenerCambios = null; }
         if (listenerSolicitudes) { listenerSolicitudes.off(); listenerSolicitudes = null; }
         if (listenerMiembros) { listenerMiembros.off(); listenerMiembros = null; }
@@ -1882,8 +1574,6 @@
                     <select id="ei-tipo-${m.id}" style="padding:8px 10px; border:1px solid #ddd6fe; border-radius:8px; font-size:0.88rem; outline:none; width:100%; box-sizing:border-box; background:var(--surface2);">
                         <option value="73/27" ${m.t==='73/27'?'selected':''}>🌙 N · 73/27</option>
                         <option value="80/20" ${m.t==='80/20'?'selected':''}>🌙 N · 80/20</option>
-                        <option value="80/20MT" ${m.t==='80/20MT'?'selected':''}>☀️ 80/20 M/T</option>
-                        <option value="73/27MT" ${m.t==='73/27MT'?'selected':''}>☀️ 73/27 M/T</option>
                     </select>
                     <select id="ei-grp-${m.id}" style="padding:8px 10px; border:1px solid #ddd6fe; border-radius:8px; font-size:0.88rem; outline:none; width:100%; box-sizing:border-box; background:var(--surface2);">
                         ${grupoOpts}
@@ -1955,7 +1645,7 @@
         const p = equipo.find(x => x.id === uid);
         if (!p) return { esLibreReal: false, data: null };
         const data = (dbCambios[uid] && dbCambios[uid][`${mIdx}_${d}`]) ? dbCambios[uid][`${mIdx}_${d}`] : null;
-        const tabla = (p.t === '80/20') ? gruposLibres8020 : (p.t === '80/20MT') ? gruposLibres8020MT : (p.t === '73/27MT') ? gruposLibres7327MT : gruposLibres;
+        const tabla = (p.t === '80/20') ? gruposLibres8020 : gruposLibres;
         const libreBase = (tabla[p.g] && tabla[p.g][mIdx]?.includes(d));
         let esLibreReal = libreBase;
         if (data) {
@@ -1963,7 +1653,7 @@
             const t = data.texto || '';
             if (c === 'b-cambio-libre' || c === 'b-vac') {
                 esLibreReal = true;
-            } else if (c === 'b-inter' || c === 'b-pend' || c === 'b-generado' || c === 'b-l26') {
+            } else if (c === 'b-inter' || c === 'b-pend' || c === 'b-generado') {
                 esLibreReal = false;
             } else if (t.includes('Libras')) {
                 esLibreReal = true;
@@ -1979,15 +1669,6 @@
 
     function iniciarPresencia() {
         if (!grupoActual || !miID) return;
-        // Borrar presencia en CUALQUIER otro grupo donde este usuario pudiera estar activo
-        db.ref('presencia').once('value', snap => {
-            const todos = snap.val() || {};
-            Object.keys(todos).forEach(g => {
-                if (g !== grupoActual && todos[g][miID]) {
-                    db.ref(`presencia/${g}/${miID}`).remove();
-                }
-            });
-        });
         const ref = db.ref(`presencia/${grupoActual}/${miID}`);
         // Marcar como conectado
         ref.set({ ts: Date.now(), n: miNombreCompleto });
@@ -2028,87 +1709,8 @@
         });
     }
 
-    // Año actualmente visible en el calendario
-    let _calAnio = new Date().getFullYear();
-    // Para recordar si el calendario fue abierto desde el panel de grupos
-    let _calModoGrupo = false;
-    let _calGrupoActivo = null;
-    let _calTurnoActivo = null;
-    // Cache de grupos calculados por año para no recalcular cada vez
-    const _calCache = {};
-
-    function _getGruposParaAnio(anio) {
-        if (!_calCache[anio]) {
-            _calCache[anio] = {
-                g7327:   _calcGrupos(anio, _P7327,   _OFF_BASE, _ANIO_BASE),
-                g8020:   _calcGrupos(anio, _P8020,   _OFF_BASE, _ANIO_BASE),
-                g8020mt: _calcGrupos(anio, _P8020MT, _OFF_BASE, _ANIO_BASE),
-                g7327mt: _calcGrupos(anio, _P7327MT, _OFF_BASE, _ANIO_BASE)
-            };
-        }
-        return _calCache[anio];
-    }
-
-    function cambiarAnioCalendario(delta) {
-        _calAnio += delta;
-        if (_calModoGrupo && _calGrupoActivo) {
-            // Modo grupo: re-renderizar el calendario del grupo
-            _renderCalGrupoAnio(_calGrupoActivo, _calTurnoActivo);
-        } else if (idCalendarioAbierto) {
-            _renderCalAnio(idCalendarioAbierto);
-        }
-    }
-
-    function _renderCalAnio(uid) {
-        const p = equipo.find(x => x.id === uid);
-        if (!p) return;
-        document.getElementById('cal-anio-label').innerText = _calAnio;
-        const grupos = _getGruposParaAnio(_calAnio);
-        const tablaAnio = p.t === '80/20' ? grupos.g8020 : p.t === '80/20MT' ? grupos.g8020mt : p.t === '73/27MT' ? grupos.g7327mt : grupos.g7327;
-
-        const grid = document.getElementById('m-grid'); grid.innerHTML = "";
-        mesesArr.forEach((m, mIdx) => {
-            let html = `<div class="month-box"><div style="text-align:center; font-weight:bold; color:var(--primary-dark); margin-bottom:8px;">${m}</div><div class="days-container">`;
-            let start = new Date(_calAnio, mIdx, 1).getDay(); start = (start === 0) ? 6 : start - 1;
-            for(let i=0; i<start; i++) html += `<div></div>`;
-            const totalDias = new Date(_calAnio, mIdx+1, 0).getDate();
-            for(let d=1; d<=totalDias; d++) {
-                let esLibreReal, data;
-                if (_calAnio === _anioActual) {
-                    ({ esLibreReal, data } = checkEstado(uid, mIdx, d));
-                } else {
-                    esLibreReal = !!(tablaAnio[p.g] && tablaAnio[p.g][mIdx]?.includes(d));
-                    data = null;
-                }
-                let clase = esLibreReal ? "is-free" : "is-work";
-                if ((start + d - 1) % 7 === 6) clase += " is-sun";
-                if (data) clase += " " + data.clase;
-                // b-l26: día libre que se trabaja -> mostrar como trabajo (círculo)
-                const esL26 = data?.clase === 'b-l26';
-                if (esL26) { clase = "is-work b-l26"; }
-                // Festivo: rojo fondo, negro si trabaja, blanco si libra
-                if (_esFestivo(d, mIdx + 1, _calAnio)) clase = esLibreReal ? "is-festivo-libre" : "is-festivo";
-                if (_calAnio === _anioActual && dbNotas[uid]?.[`${mIdx}_${d}`]) clase += " tiene-nota";
-                // Todos los cambios son cuadrados; sin cambio: libre=cuadrado, trabaja=círculo
-                let forma = data ? 'shape-square' : (esLibreReal ? 'shape-square' : 'shape-circle');
-                if (_calAnio === _anioActual) {
-                    html += `<div class="d-cell ${clase} ${forma}"
-                        onclick="handleDayClick(${d},${mIdx},'${uid}')"
-                        onmousedown="pressStart(event,${d},${mIdx},'${uid}')"
-                        ontouchstart="touchDayStart(event,${d},${mIdx},'${uid}')"
-                        ontouchend="touchDayEnd(event,${d},${mIdx},'${uid}')"
-                        onmouseup="cancelarTodoTimer()">${d}</div>`;
-                } else {
-                    html += `<div class="d-cell ${clase} ${forma}" style="cursor:default;">${d}</div>`;
-                }
-            }
-            grid.innerHTML += html + `</div></div>`;
-        });
-    }
-
     function abrirCal(uid) {
         idCalendarioAbierto = uid;
-        _calAnio = _anioActual;
         if (modoSeleccionActivo && tipoCambio === 'COMP' && uid !== miID) {
             targetCompaneroID = uid;
             document.getElementById('selection-notice').innerText = "PASO 2: ELIGE EL DÍA EN EL CALENDARIO DE " + (equipo.find(x=>x.id===uid)?.n || uid).toUpperCase();
@@ -2116,7 +1718,30 @@
         const p = equipo.find(x => x.id === uid);
         if (!p) return;
         document.getElementById('cal-target-name').innerText = p.n;
-        _renderCalAnio(uid);
+        const grid = document.getElementById('m-grid'); grid.innerHTML = "";
+        mesesArr.forEach((m, mIdx) => {
+            let html = `<div class="month-box"><div style="text-align:center; font-weight:bold; color:var(--primary-dark); margin-bottom:8px;">${m}</div><div class="days-container">`;
+            let start = new Date(2026, mIdx, 1).getDay(); start = (start === 0) ? 6 : start - 1;
+            for(let i=0; i<start; i++) html += `<div></div>`;
+            const totalDias = new Date(2026, mIdx+1, 0).getDate();
+            for(let d=1; d<=totalDias; d++) {
+                const { esLibreReal, data } = checkEstado(uid, mIdx, d);
+                let clase = esLibreReal ? "is-free" : "is-work";
+                if ((start + d - 1) % 7 === 6) clase += " is-sun";
+                if (data) clase += " " + data.clase;
+                // Determinar forma: ⭕ círculo = trabaja, ⬜ cuadrado = libre
+                let forma = '';
+                if (esLibreReal) { forma = 'shape-square'; }
+                else { forma = 'shape-circle'; }
+                html += `<div class="d-cell ${clase} ${forma}"
+                    onclick="handleDayClick(${d},${mIdx},'${uid}')"
+                    onmousedown="pressStart(event,${d},${mIdx},'${uid}')"
+                    ontouchstart="touchDayStart(event,${d},${mIdx},'${uid}')"
+                    ontouchend="touchDayEnd(event,${d},${mIdx},'${uid}')"
+                    onmouseup="cancelarTodoTimer()">${d}</div>`;
+            }
+            grid.innerHTML += html + `</div></div>`;
+        });
         const calYaAbierto = document.getElementById('m-cal').style.display !== 'none';
         document.getElementById('m-cal').style.display = "block";
         if (!calYaAbierto) _onModalOpen();
@@ -2226,12 +1851,10 @@
 
         const accionesMenu = {
             'generado': () => _abrirModalGenerado(),
-            'l26': () => _abrirModalL26(),
             'pendiente': () => _abrirModalPendiente(),
             'vacaciones': () => abrirVacModal(),
             'comp': () => prepararCambio('COMP'),
             'auto': () => _abrirModalCambioPropio(),
-            'nota': () => abrirNotaModal(),
             'borrar': () => borrarCambio()
         };
 
@@ -2240,12 +1863,10 @@
 
         const opts = [
             { label: '✨ ' + diaLabel + ' Generado', color: 'var(--pink)', key: 'generado' },
-            { label: '🔶 ' + diaLabel + ' L-26', color: '#f97316', key: 'l26' },
             { label: '⏳ ' + diaLabel + ' Pendiente', color: 'var(--primary)', key: 'pendiente' },
             { label: '🌴 Vacaciones', color: 'var(--success)', key: 'vacaciones' },
             { label: '🤝 Cambio con Compañero', color: 'var(--text)', key: 'comp' },
             { label: '🔄 Cambio Propio', color: 'var(--text)', key: 'auto' },
-            { label: '📝 Mis Notas', color: '#06b6d4', key: 'nota' },
             { label: '❌ Borrar', color: 'red', key: 'borrar' }
         ];
         opts.forEach(o => {
@@ -2553,32 +2174,6 @@
         });
     }
 
-    function _hmQuitarResolucionL26(fechaLibre) {
-        db.ref('historial2/' + miID).once('value').then(function(snap) {
-            var encontrado = false;
-            snap.forEach(function(child) {
-                var h = child.val();
-                if (h && h.cat === 'l26' && h.resuelto && h.resuelto.diaLibre === fechaLibre) {
-                    encontrado = true;
-                    db.ref('historial2/' + miID + '/' + child.key + '/resuelto').remove().then(function() {
-                        _hmBadges();
-                        // Recargar tarjeta si el historial está abierto
-                        if (document.getElementById('historial-modal').style.display !== 'none') {
-                            _hmCargar('generado');
-                        }
-                    });
-                }
-            });
-            if (!encontrado) _hmBadges();
-        });
-    }
-
-    function _hmBorrarL26PorFecha(fecha) {
-        // Al borrar la marca L-26 del calendario, el L-26 del historial queda disponible
-        // Solo actualizamos los badges, NO borramos el historial
-        _hmBadges();
-    }
-
     function _hmQuitarResolucionPendiente(fechaLibre) {
         // Al borrar un dia libre que resolvía un pendiente:
         // quitar solo la resolución, mantener el pendiente disponible
@@ -2587,20 +2182,6 @@
                 var h = child.val();
                 if (h && h.cat === 'pendiente' && h.resuelto &&
                     h.resuelto.diaComp === fechaLibre) {
-                    db.ref('historial2/' + miID + '/' + child.key + '/resuelto').set(null);
-                }
-            });
-        });
-    }
-
-    function _hmQuitarResolucionConvenio(fechaLibre) {
-        // Al borrar un dia libre que resolvía un convenio:
-        // quitar solo la resolución, el convenio queda disponible de nuevo
-        db.ref('historial2/' + miID).once('value').then(function(snap) {
-            snap.forEach(function(child) {
-                var h = child.val();
-                if (h && h.cat === 'generado' && h.subtipo === 'convenio' && h.resuelto &&
-                    (h.resuelto.diaComp === fechaLibre || h.resuelto.diaLibre === fechaLibre)) {
                     db.ref('historial2/' + miID + '/' + child.key + '/resuelto').set(null);
                 }
             });
@@ -2627,13 +2208,6 @@
         const data = dbCambios[uid]?.[`${mIdx}_${d}`];
         const esVacaciones = data?.texto === 'Vacaciones';
         const esCambioComp = (data?.clase === 'b-inter' || data?.clase === 'b-cambio-libre') && data?.linkedUid;
-        const tieneNota = !!(dbNotas[uid]?.[`${mIdx}_${d}`]);
-
-        // Si el día solo tiene nota y no tiene ningún cambio, borrar solo la nota
-        if (!data && tieneNota) {
-            db.ref(`notas/${uid}/${mIdx}_${d}`).remove().then(cerrarDesplegables);
-            return;
-        }
 
         if (esCambioComp) {
             const linkedUid = data.linkedUid;
@@ -2651,7 +2225,6 @@
                     updates[`cambios/${linkedUid}/${linkedData.linkedUid === uid ? linkedKey : linkedData.linkedKey}`] = null;
                 }
                 db.ref().update(updates).then(function() {
-                    if (tieneNota) db.ref(`notas/${uid}/${mIdx}_${d}`).remove();
                     cerrarDesplegables();
                     // Borrar de historial2 por ambas fechas del cambio
                     var fecha1 = d + '/' + (mIdx+1);
@@ -2684,22 +2257,14 @@
         }
 
         db.ref(`cambios/${uid}/${mIdx}_${d}`).remove().then(function() {
-            if (tieneNota) db.ref(`notas/${uid}/${mIdx}_${d}`).remove();
             cerrarDesplegables();
             if (uid === miID) {
                 var fecha = d + '/' + (mIdx+1);
                 var texto = data ? (data.texto || '') : '';
                 if (texto.includes('Libras (por pendiente)')) {
                     _hmQuitarResolucionPendiente(fecha);
-                } else if (texto.includes('Libras (por convenio)')) {
-                    _hmQuitarResolucionConvenio(fecha);
                 } else if (texto.includes('Libras (por generado)')) {
                     _hmQuitarResolucionGenerado(fecha);
-                } else if (texto.includes('Libras (por L-26')) {
-                    _hmQuitarResolucionL26(fecha);
-                } else if (texto === 'L-26') {
-                    // Borrar el L-26 del historial directamente
-                    _hmBorrarL26PorFecha(fecha);
                 } else if (texto.includes('Haces (x ') && data && data.linkedUid) {
                     // Cambio con compañero
                     _hmBorrarCambioComp(fecha, data.linkedKey);
@@ -2736,43 +2301,6 @@
     }
 
     function cerrarDesplegables() { document.getElementById('ctx-menu').style.display = 'none'; }
-
-    // ===== MIS NOTAS =====
-    let dbNotas = {}; // cache local: dbNotas[uid][mIdx_d] = { texto, ts }
-
-    function abrirNotaModal() {
-        cerrarDesplegables();
-        const { d, mIdx, uid } = diaSeleccionado;
-        const mesesCortos = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-        document.getElementById('nota-info').innerText = d + ' ' + mesesCortos[mIdx];
-        const existente = dbNotas[uid]?.[`${mIdx}_${d}`];
-        const txt = existente ? existente.texto : '';
-        document.getElementById('nota-input').value = txt;
-        document.getElementById('nota-contador').innerText = txt.length + ' / 250';
-        document.getElementById('nota-modal').style.display = 'flex'; _onModalOpen();
-    }
-    function cerrarNotaModal() { document.getElementById('nota-modal').style.display = 'none'; }
-
-    function guardarMiNota() {
-        const { d, mIdx, uid } = diaSeleccionado;
-        const texto = document.getElementById('nota-input').value.trim().slice(0, 250);
-        if (!texto) { alert('Escribe alguna anotación antes de guardar.'); return; }
-        db.ref(`notas/${uid}/${mIdx}_${d}`).set({ texto, ts: Date.now(), fecha: d + '/' + (mIdx + 1) }).then(function() {
-            cerrarNotaModal();
-        });
-    }
-
-    function borrarNota(uid, mIdx, d) {
-        db.ref(`notas/${uid}/${mIdx}_${d}`).remove();
-    }
-
-    function iniciarListenerNotas(uid) {
-        db.ref('notas/' + uid).on('value', function(snap) {
-            dbNotas[uid] = snap.val() || {};
-            if (typeof renderList === 'function') renderList();
-        });
-    }
-
     function cerrarDiaModal() {
         document.getElementById('dia-modal').style.display = 'none';
     }
@@ -2825,11 +2353,9 @@
     // ===== PANEL TODOS LOS GRUPOS =====
     let panelTurno = '73/27';
     let panelMes = new Date().getMonth();
-    let panelAnio = new Date().getFullYear();
 
     function abrirPanelGrupos() {
         panelMes = mHoy;
-        panelAnio = new Date().getFullYear();
         panelTurno = '73/27';
         document.getElementById('grupos-panel').style.display = 'flex'; _onModalOpen();
         renderPanelGrupos();
@@ -2839,56 +2365,28 @@
         document.getElementById('grupos-panel').style.display = 'none';
     }
 
-    function _renderCalGrupoAnio(grupo, turno) {
-        const anioVer = _calAnio;
-        let tabla;
-        if (anioVer === _anioActual) {
-            tabla = turno === '80/20' ? gruposLibres8020 : turno === '80/20MT' ? gruposLibres8020MT : turno === '73/27MT' ? gruposLibres7327MT : gruposLibres;
-        } else {
-            const gAnio = _getGruposParaAnio(anioVer);
-            tabla = turno === '80/20' ? gAnio.g8020 : turno === '80/20MT' ? gAnio.g8020mt : turno === '73/27MT' ? gAnio.g7327mt : gAnio.g7327;
-        }
-        document.getElementById('cal-target-name').innerText = 'Grupo ' + grupo + ' · ' + turno + ' · ' + anioVer;
-        document.getElementById('cal-anio-label').innerText = anioVer;
+    function abrirCalGrupo(grupo, turno) {
+        const tabla = turno === '80/20' ? gruposLibres8020 : gruposLibres;
         const grid = document.getElementById('m-grid');
         grid.innerHTML = '';
+        document.getElementById('cal-target-name').innerText = 'Grupo ' + grupo + ' · ' + turno + ' · Días libres';
+
         mesesArr.forEach((m, mIdx) => {
             const diasLibres = (tabla[grupo] && tabla[grupo][mIdx]) ? tabla[grupo][mIdx] : [];
-            let h = `<div class="month-box"><div style="text-align:center; font-weight:bold; color:var(--primary-dark); margin-bottom:8px;">${m}</div><div class="days-container">`;
-            let start = new Date(anioVer, mIdx, 1).getDay();
+            let html = `<div class="month-box"><div style="text-align:center; font-weight:bold; color:var(--primary-dark); margin-bottom:8px;">${m}</div><div class="days-container">`;
+            let start = new Date(2026, mIdx, 1).getDay();
             start = (start === 0) ? 6 : start - 1;
-            for (let i = 0; i < start; i++) h += `<div></div>`;
-            const totalDias = new Date(anioVer, mIdx + 1, 0).getDate();
+            for (let i = 0; i < start; i++) html += `<div></div>`;
+            const totalDias = new Date(2026, mIdx + 1, 0).getDate();
             for (let d = 1; d <= totalDias; d++) {
                 const esLibre = diasLibres.includes(d);
                 const esDom = (start + d - 1) % 7 === 6;
                 let clase = esLibre ? 'is-free' : 'is-work';
                 if (esDom) clase += ' is-sun';
-                if (_esFestivo(d, mIdx + 1, _calAnio)) clase = esLibre ? 'is-festivo-libre' : 'is-festivo';
-                h += `<div class="d-cell ${clase}">${d}</div>`;
+                html += `<div class="d-cell ${clase}">${d}</div>`;
             }
-            grid.innerHTML += h + `</div></div>`;
+            grid.innerHTML += html + `</div></div>`;
         });
-    }
-
-    function abrirCalGrupo(grupo, turno) {
-        // Usar el año que está viendo el panel de grupos
-        const anioVer = panelAnio;
-        let tabla;
-        if (anioVer === _anioActual) {
-            tabla = turno === '80/20' ? gruposLibres8020 : turno === '80/20MT' ? gruposLibres8020MT : gruposLibres;
-        } else {
-            const gAnio = _getGruposParaAnio(anioVer);
-            tabla = turno === '80/20' ? gAnio.g8020 : turno === '80/20MT' ? gAnio.g8020mt : gAnio.g7327;
-        }
-        // Guardar estado para que las flechas de año funcionen
-        _calModoGrupo = true;
-        _calGrupoActivo = grupo;
-        _calTurnoActivo = turno;
-        _calAnio = anioVer;
-        idCalendarioAbierto = null;
-
-        _renderCalGrupoAnio(grupo, turno);
 
         document.getElementById('m-cal').style.display = 'block';
         document.getElementById('m-cal').style.zIndex = '6000';
@@ -2896,18 +2394,6 @@
     }
 
     function setPanelTurno(turno) {
-        const btnMT = document.getElementById('pg-tab-8020mt');
-        if (btnMT) {
-            btnMT.style.background = turno==='80/20MT' ? 'var(--primary)' : 'var(--surface2)';
-            btnMT.style.color = turno==='80/20MT' ? 'white' : 'var(--primary)';
-            btnMT.style.borderColor = turno==='80/20MT' ? 'var(--primary)' : '#ddd6fe';
-        }
-        const btn7327MT = document.getElementById('pg-tab-7327mt');
-        if (btn7327MT) {
-            btn7327MT.style.background = turno==='73/27MT' ? 'var(--primary)' : 'var(--surface2)';
-            btn7327MT.style.color = turno==='73/27MT' ? 'white' : 'var(--primary)';
-            btn7327MT.style.borderColor = turno==='73/27MT' ? 'var(--primary)' : '#ddd6fe';
-        }
         panelTurno = turno;
         document.getElementById('pg-tab-7327').style.background = turno === '73/27' ? 'var(--primary)' : 'white';
         document.getElementById('pg-tab-7327').style.color = turno === '73/27' ? 'white' : 'var(--primary)';
@@ -2919,22 +2405,13 @@
     }
 
     function cambiarMesPanel(dir) {
-        panelMes += dir;
-        if (panelMes > 11) { panelMes = 0; panelAnio++; }
-        else if (panelMes < 0) { panelMes = 11; panelAnio--; }
+        panelMes = (panelMes + dir + 12) % 12;
         renderPanelGrupos();
     }
 
     function renderPanelGrupos() {
-        document.getElementById('pg-mes-label').innerText = mesesArr[panelMes] + ' ' + panelAnio;
-        // Obtener grupos del año correcto (usa cache si ya fue calculado)
-        let tabla;
-        if (panelAnio === _anioActual) {
-            tabla = panelTurno === '80/20' ? gruposLibres8020 : panelTurno === '80/20MT' ? gruposLibres8020MT : panelTurno === '73/27MT' ? gruposLibres7327MT : gruposLibres;
-        } else {
-            const gAnio = _getGruposParaAnio(panelAnio);
-            tabla = panelTurno === '80/20' ? gAnio.g8020 : panelTurno === '80/20MT' ? gAnio.g8020mt : panelTurno === '73/27MT' ? gAnio.g7327mt : gAnio.g7327;
-        }
+        document.getElementById('pg-mes-label').innerText = mesesArr[panelMes] + ' 2026';
+        const tabla = panelTurno === '80/20' ? gruposLibres8020 : gruposLibres;
         const cont = document.getElementById('pg-grupos-lista');
         cont.innerHTML = '';
 
@@ -3306,41 +2783,27 @@
 
     function _hmBadges() {
         db.ref('historial2/' + miID).once('value').then(function(snap) {
-            var c = { generado:0, l26:0, convenio:0, festivo:0, pendiente:0, comp:0, propio:0 };
+            var c = { generado:0, pendiente:0, comp:0, propio:0 };
             Object.values(snap.val() || {}).forEach(function(h) {
+                if (c[h.cat] === undefined) return;
+                // Generados: solo cuentan los disponibles (sin resolver ni cobrar)
                 if (h.cat === 'generado') {
-                    if (!h.resuelto && !h.cobrado) {
-                        if (h.subtipo === 'convenio') c.convenio++;
-                        else if (h.subtipo === 'festivo') c.festivo++;
-                        else c.generado++;
-                    }
+                    if (!h.resuelto && !h.cobrado) c.generado++;
                     return;
                 }
-                if (h.cat === 'l26') {
-                    if (!h.resuelto && !h.cobrado) c.l26++; // contador separado
-                    return;
-                }
+                // Pendientes: solo cuentan los sin resolver
                 if (h.cat === 'pendiente') {
                     if (!h.resuelto) c.pendiente++;
                     return;
                 }
-                if (c[h.cat] !== undefined) c[h.cat]++;
+                c[h.cat]++;
             });
-            ['generado','l26','pendiente','comp','propio'].forEach(function(cat) {
+            Object.keys(c).forEach(function(cat) {
                 var b = document.getElementById('badge-' + cat);
                 if (!b) return;
                 b.style.display = c[cat] > 0 ? 'block' : 'none';
                 b.textContent = c[cat];
             });
-            var bc = document.getElementById('badge-convenio');
-            if (bc) { bc.style.display = c.convenio > 0 ? 'block' : 'none'; bc.textContent = c.convenio; }
-            var bf = document.getElementById('badge-festivo');
-            if (bf) { bf.style.display = c.festivo > 0 ? 'block' : 'none'; bf.textContent = c.festivo; }
-        });
-        db.ref('notas/' + miID).once('value').then(function(snap) {
-            var n = Object.keys(snap.val() || {}).length;
-            var bn = document.getElementById('badge-notas');
-            if (bn) { bn.style.display = n > 0 ? 'block' : 'none'; bn.textContent = n; }
         });
     }
 
@@ -3348,10 +2811,9 @@
 
     function abrirCategoria(cat) {
         _hmCat = cat;
-        var titulos = { generado:'\u2728 Generado', l26:'\ud83d\udd36 L-26', pendiente:'\u23f3 Pendiente', comp:'Con companero', propio:'Cambio propio', notas:'\ud83d\udcdd Mis Notas' };
+        var titulos = { generado:'\u2728 Generado', pendiente:'\u23f3 Pendiente', comp:'Con companero', propio:'Cambio propio' };
         document.getElementById('hm-titulo').textContent = titulos[cat] || cat;
         document.getElementById('hm-form-wrap').style.display = 'none';
-        document.getElementById('hm-btn-add').style.display = (cat === 'notas') ? 'none' : 'inline-block';
         _hmIr('detalle');
         _hmPush('detalle');
         if (_hmListener) { _hmListener.off(); _hmListener = null; }
@@ -3391,55 +2853,6 @@
         var cont = document.getElementById('hm-items');
         cont.innerHTML = '<div style="text-align:center;color:#64748b;padding:20px;">Cargando...</div>';
 
-        if (cat === 'notas') {
-            db.ref('notas/' + miID).once('value').then(function(snap) {
-                var items = Object.entries(snap.val() || {});
-                items.sort(function(a,b) { return (b[1].ts||0)-(a[1].ts||0); });
-                if (!items.length) { cont.innerHTML='<div style="text-align:center;color:#64748b;padding:20px;">Sin notas aún. Mantén pulsado un día del calendario y elige 📝 Mis Notas.</div>'; return; }
-                cont.innerHTML = items.map(function(item) {
-                    var k = item[0], h = item[1];
-                    var fecha = h.ts ? new Date(h.ts).toLocaleDateString('es',{day:'2-digit',month:'2-digit',year:'numeric'}) : '';
-                    var path = 'notas/' + miID + '/' + k;
-                    return '<div style="border:1px solid #06b6d4;border-radius:12px;padding:14px;margin-bottom:10px;background:#ecfeff;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-                            '<div><div style="font-weight:800;color:#0e7490;">📝 '+(h.fecha||'—')+'</div><div style="font-size:0.72rem;color:#0e7490;opacity:0.7;">'+fecha+'</div></div>' +
-                            '<div style="display:flex;gap:4px;">' +
-                                '<button data-key="'+k+'" onclick="_hmEditNota(this)" style="background:#cffafe;color:#0e7490;border:none;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;">✏️</button>' +
-                                '<button data-path="'+path+'" onclick="_hmDelNota(this)" style="background:#fee2e2;color:#ef4444;border:none;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;">🗑️</button>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div style="font-size:0.85rem;color:#155e75;white-space:pre-wrap;">'+(h.texto||'')+'</div>' +
-                    '</div>';
-                }).join('');
-            });
-            return;
-        }
-
-        if (cat === 'l26') {
-            db.ref('historial2/' + miID).once('value').then(function(snap) {
-                var E = snap.val() || {};
-                var items = Object.entries(E).filter(function(e) { return e[1].cat === 'l26'; });
-                items.sort(function(a,b) { return (b[1].ts||0)-(a[1].ts||0); });
-                if (!items.length) { cont.innerHTML='<div style="text-align:center;color:#64748b;padding:20px;">Sin días L-26. Mantén pulsado un día libre y elige 🔶 L-26.</div>'; return; }
-                var renderItemL26 = function(entry) {
-                    var k=entry[0], h=entry[1];
-                    var estado = h.cobrado ? '<span style="background:#dcfce7;color:#166534;border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700;">Cobrado</span>' :
-                                 h.resuelto ? '<span style="background:#e0f2fe;color:#0369a1;border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700;">Librado '+(h.resuelto.diaLibre||'')+'</span>' :
-                                 '<span style="background:#fff7ed;color:#c2410c;border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700;">Pendiente</span>';
-                    return '<div style="border:2px solid #f97316;border-radius:12px;padding:14px;margin-bottom:10px;background:#fff7ed;">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                            '<div><div style="font-weight:800;color:#c2410c;">🔶 '+h.fecha+'</div>' +
-                            '<div style="font-size:0.72rem;color:#94a3b8;margin-top:2px;">'+(h.nota||'L-26')+'</div></div>' +
-                            estado +
-                        '</div>' +
-                        (!h.resuelto && !h.cobrado ? '<button data-k="'+k+'" data-f="'+h.fecha+'" onclick="_gestionarL26(this)" style="margin-top:10px;width:100%;padding:10px;background:#f97316;color:white;border:none;border-radius:10px;font-weight:700;">Gestionar</button>' : '') +
-                    '</div>';
-                };
-                cont.innerHTML = items.map(renderItemL26).join('');
-            });
-            return;
-        }
-
         if (cat === 'comp') {
             db.ref('historial2/' + miID).once('value').then(function(snap) {
                 var items = [];
@@ -3471,71 +2884,15 @@
         db.ref('historial2/' + miID).once('value').then(function(snap) {
             var items = Object.entries(snap.val()||{}).filter(function(e) {
                 var h = e[1];
-                // Para la tarjeta generado incluir también los l26
-                if (cat === 'generado') return h.cat === 'generado' || h.cat === 'l26';
                 if (h.cat !== cat) return false;
+                // Pendientes: mostrar todos (resueltos con etiqueta, no resueltos con boton)
+                // Generados: mostrar todos (cobrados con etiqueta, disponibles con boton Decidir)
                 return true;
             }).sort(function(a,b){ return (b[1].ts||0)-(a[1].ts||0); });
             if (!items.length) { cont.innerHTML='<div style="text-align:center;color:#64748b;padding:20px;">Sin entradas a\u00fan. Pulsa \u2795</div>'; return; }
             var E = { generado:{borde:'#f472b6',bg:'#fdf2f8',color:'#be185d'}, pendiente:{borde:'#8b5cf6',bg:'#f5f3ff',color:'#6d28d9'}, propio:{borde:'#ef4444',bg:'#fff1f2',color:'#ef4444'} };
             var e = E[cat] || E.generado;
-            cont.innerHTML = (function() {
-                // Incluir tanto 'generado' como 'l26' en la tarjeta Generados
-                if (cat !== 'generado') return items.map(renderItemGen).join('');
-                var grpGen = items.filter(function(i){ return i[1].cat === 'generado' && i[1].subtipo !== 'convenio' && i[1].subtipo !== 'festivo'; });
-                var grpL26 = items.filter(function(i){ return i[1].cat === 'l26'; });
-                var grpCon = items.filter(function(i){ return i[1].cat === 'generado' && i[1].subtipo === 'convenio'; });
-                var grpFes = items.filter(function(i){ return i[1].cat === 'generado' && i[1].subtipo === 'festivo'; });
-
-                function _sortByFecha(arr) {
-                    return arr.sort(function(a, b) {
-                        var pa = (a[1].fecha||'').split('/'), pb = (b[1].fecha||'').split('/');
-                        var da = new Date(2026, parseInt(pa[1]||1)-1, parseInt(pa[0]||1));
-                        var db2 = new Date(2026, parseInt(pb[1]||1)-1, parseInt(pb[0]||1));
-                        return da - db2;
-                    });
-                }
-                grpGen = _sortByFecha(grpGen);
-                grpCon = _sortByFecha(grpCon);
-                var html = '';
-                if (grpGen.length) {
-                    html += '<div style="font-size:0.72rem;font-weight:800;color:#be185d;letter-spacing:0.05em;margin-bottom:8px;padding:4px 2px;">✨ GENERADOS</div>';
-                    html += grpGen.map(renderItemGen).join('');
-                }
-                if (grpL26.length) {
-                    if (grpGen.length) html += '<div style="border-top:1px solid #fed7aa;margin:12px 0 10px 0;"></div>';
-                    html += '<div style="font-size:0.72rem;font-weight:800;color:#c2410c;letter-spacing:0.05em;margin-bottom:8px;padding:4px 2px;">🔶 L-26</div>';
-                    html += grpL26.map(function(item) {
-                        var k=item[0], h=item[1];
-                        var eL26 = {borde:'#f97316', bg:'#fff7ed', color:'#c2410c'};
-                        var estadoLabel = '';
-                        if (h.cobrado) estadoLabel = ' <span style="font-size:0.7rem;background:#f0fdf4;color:#166534;border-radius:6px;padding:1px 6px;font-weight:700;">Cobrado</span>';
-                        else if (h.resuelto && h.resuelto.accion === 'librar') estadoLabel = ' <span style="font-size:0.7rem;background:#fff7ed;color:#c2410c;border-radius:6px;padding:1px 6px;font-weight:700;">Librado el '+h.resuelto.diaLibre+'</span>';
-                        var path = 'historial2/'+miID+'/'+k;
-                        var btnDec = (!h.resuelto && !h.cobrado) ? '<button data-k="'+k+'" data-f="'+(h.fecha||'')+'" onclick="_gestionarL26(this)" style="margin-top:8px;width:100%;padding:9px;background:#f97316;color:white;border:none;border-radius:10px;font-weight:700;">Gestionar</button>' : '';
-                        return '<div style="border:2px solid #f97316;border-radius:12px;padding:14px;margin-bottom:10px;background:#fff7ed;">' +
-                            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                                '<div style="font-weight:800;color:#c2410c;">🔶 '+(h.fecha||'—')+estadoLabel+'</div>' +
-                                _hmBtnBorrar(path) +
-                            '</div>' +
-                            btnDec +
-                        '</div>';
-                    }).join('');
-                }
-                if (grpCon.length) {
-                    if (grpGen.length) html += '<div style="border-top:1px solid #f0e0c8;margin:12px 0 10px 0;"></div>';
-                    html += '<div style="font-size:0.72rem;font-weight:800;color:#92400e;letter-spacing:0.05em;margin-bottom:8px;padding:4px 2px;">📋 CONVENIO</div>';
-                    html += grpCon.map(renderItemGen).join('');
-                }
-                if (grpFes.length) {
-                    _sortByFecha(grpFes);
-                    if (grpGen.length || grpCon.length) html += '<div style="border-top:1px solid #bfdbfe;margin:12px 0 10px 0;"></div>';
-                    html += '<div style="font-size:0.72rem;font-weight:800;color:#1d4ed8;letter-spacing:0.05em;margin-bottom:8px;padding:4px 2px;">🎉 FESTIVOS</div>';
-                    html += grpFes.map(renderItemGen).join('');
-                }
-                return html;
-            })();
-            function renderItemGen(item) {
+            cont.innerHTML = items.map(function(item) {
                 var k=item[0], h=item[1];
                 var fecha = h.ts ? new Date(h.ts).toLocaleDateString('es',{day:'2-digit',month:'2-digit',year:'numeric'}) : '';
                 var path = 'historial2/'+miID+'/'+k;
@@ -3572,90 +2929,39 @@
                 }
 
                 // generado
-                    var esConvenio = h.subtipo === 'convenio';
-                    var esFestivo = h.subtipo === 'festivo';
-                    var eConv = {borde:'#f59e0b', bg:'#fffbeb', color:'#92400e'};
-                    var eFes  = {borde:'#3b82f6', bg:'#eff6ff', color:'#1d4ed8'};
-                    var eActual = esConvenio ? eConv : esFestivo ? eFes : e;
                     var estadoLabel = '';
                     if (h.resuelto) {
                         if (h.resuelto.accion === 'cobrado') estadoLabel = ' <span style="font-size:0.7rem;background:#f0fdf4;color:#166534;border-radius:6px;padding:1px 6px;font-weight:700;">Cobrado</span>';
                         else if (h.resuelto.accion === 'librar') estadoLabel = ' <span style="font-size:0.7rem;background:#fdf2f8;color:#be185d;border-radius:6px;padding:1px 6px;font-weight:700;">Librado el '+h.resuelto.diaLibre+'</span>';
-                        else if (h.resuelto.accion === 'libre') estadoLabel = ' <span style="font-size:0.7rem;background:#fff7ed;color:#92400e;border-radius:6px;padding:1px 6px;font-weight:700;">Librado el '+(h.resuelto.diaComp||h.resuelto.diaLibre||'')+'</span>';
                     }
-                    var btnDec = '';
-                    if (!h.resuelto) {
-                        if (esConvenio) {
-                            btnDec = '<button data-key="'+k+'" data-fecha="'+(h.fecha||'')+'" onclick="_hmRes(this)" style="background:#f59e0b;color:white;border:none;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;flex-shrink:0;">Resolver</button>';
-                        } else {
-                            btnDec = '<button data-key="'+k+'" data-fecha="'+(h.fecha||'')+'" onclick="_abrirDecisionGenerado(this.dataset.key,this.dataset.fecha)" style="background:'+(esFestivo?'#3b82f6':'#be185d')+';color:white;border:none;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;flex-shrink:0;">Decidir</button>';
-                        }
-                    }
-                    var subLabel = esConvenio ? 'Convenio &middot; ' : esFestivo ? 'Festivo &middot; ' : 'Generado &middot; ';
-                    return '<div style="border:1px solid '+eActual.borde+';border-radius:12px;padding:14px;margin-bottom:10px;background:'+eActual.bg+';">'+
+                    var btnDec = !h.resuelto
+                        ? '<button data-key="'+k+'" data-fecha="'+(h.fecha||'')+'" onclick="_abrirDecisionGenerado(this.dataset.key,this.dataset.fecha)" style="background:#be185d;color:white;border:none;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;flex-shrink:0;">Decidir</button>'
+                        : '';
+                    return '<div style="border:1px solid '+e.borde+';border-radius:12px;padding:14px;margin-bottom:10px;background:'+e.bg+';">'+
                         '<div style="display:flex;justify-content:space-between;align-items:center;">'+
-                            '<div><div style="font-weight:800;color:'+eActual.color+';">'+(h.fecha||'-')+estadoLabel+'</div>'+
-                            '<div style="font-size:0.72rem;color:'+eActual.color+';opacity:0.7;">'+subLabel+fecha+'</div></div>'+
+                            '<div><div style="font-weight:800;color:'+e.color+';">'+(h.fecha||'-')+estadoLabel+'</div>'+
+                            '<div style="font-size:0.72rem;color:'+e.color+';opacity:0.7;">Generado &middot; '+fecha+'</div></div>'+
                             '<div style="display:flex;gap:4px;">'+btnDec+_hmBtnEditar(k,'generado')+_hmBtnBorrar(path)+'</div>'+
                         '</div>'+
-                        (h.nota?'<div style="font-size:0.78rem;color:'+eActual.color+';margin-top:4px;">'+h.nota+'</div>':'')+
+                        (h.nota?'<div style="font-size:0.78rem;color:'+e.color+';margin-top:4px;">'+h.nota+'</div>':'')+
                     '</div>';
-            }
-        });
-    }
-
-    function _hmDelNota(btn) {
-        if (!confirm('¿Borrar esta nota?')) return;
-        var path = btn.dataset.path;
-        db.ref(path).remove().then(function() { _hmCargar('notas'); });
-    }
-
-    function _hmEditNota(btn) {
-        var k = btn.dataset.key;
-        db.ref('notas/' + miID + '/' + k).once('value').then(function(snap) {
-            var h = snap.val();
-            if (!h) return;
-            var nuevoTexto = prompt('Editar nota (máx 250 caracteres):', h.texto || '');
-            if (nuevoTexto === null) return;
-            nuevoTexto = nuevoTexto.trim().slice(0, 250);
-            if (!nuevoTexto) { alert('La nota no puede estar vacía.'); return; }
-            db.ref('notas/' + miID + '/' + k).update({ texto: nuevoTexto }).then(function() { _hmCargar('notas'); });
+            }).join('');
         });
     }
 
     function hmMostrarForm() {
         var w = document.getElementById('hm-form-wrap');
         w.style.display = w.style.display === 'none' ? 'block' : 'none';
-        ['generado','l26','pendiente','comp','propio'].forEach(function(c) {
+        ['generado','pendiente','comp','propio'].forEach(function(c) {
             document.getElementById('hm-form-'+c).style.display = c === _hmCat ? 'block' : 'none';
         });
-        // Resetear subtipo a 'generado' cada vez que se abre el form
-        if (_hmCat === 'generado') _faGenSubtipo('generado');
     }
-
-    window._faGenSubtipo = function(sub) {
-        document.getElementById('fa-gen-subtipo').value = sub;
-        var btnGen = document.getElementById('fa-gen-btn-generado');
-        var btnCon = document.getElementById('fa-gen-btn-convenio');
-        var selTipo = document.getElementById('fa-gen-tipo');
-        if (sub === 'generado') {
-            btnGen.style.background = '#f472b6'; btnGen.style.borderColor = '#f472b6'; btnGen.style.color = 'white';
-            btnCon.style.background = 'var(--surface2)'; btnCon.style.borderColor = '#d1d5db'; btnCon.style.color = '#6b7280';
-            selTipo.style.display = 'block';
-        } else {
-            btnCon.style.background = '#f59e0b'; btnCon.style.borderColor = '#f59e0b'; btnCon.style.color = 'white';
-            btnGen.style.background = 'var(--surface2)'; btnGen.style.borderColor = '#d1d5db'; btnGen.style.color = '#6b7280';
-            selTipo.style.display = 'none';
-        }
-    };
 
     function hmGuardar() {
         var cat=_hmCat, ts=Date.now(), d={ cat:cat, ts:ts };
         if (cat==='generado') {
             var f=document.getElementById('fa-gen-fecha').value.trim(); if(!f){alert('Introduce la fecha');return;}
-            var sub=document.getElementById('fa-gen-subtipo').value||'generado';
-            d.fecha=f; d.subtipo=sub; d.nota=document.getElementById('fa-gen-nota').value.trim();
-            if(sub==='generado') d.esLibre=document.getElementById('fa-gen-tipo').value==='libre';
+            d.fecha=f; d.esLibre=document.getElementById('fa-gen-tipo').value==='libre'; d.nota=document.getElementById('fa-gen-nota').value.trim();
         } else if (cat==='pendiente') {
             var f=document.getElementById('fa-pend-fecha').value.trim(); if(!f){alert('Introduce la fecha');return;}
             d.fecha=f; d.nota=document.getElementById('fa-pend-nota').value.trim(); d.resuelto=null;
@@ -3686,15 +2992,9 @@
             document.getElementById('hm-edit-titulo').textContent = titulo[cat] || 'Editar';
             var body = document.getElementById('hm-edit-body');
             if (cat==='generado') {
-                var esConv = h.subtipo === 'convenio';
                 body.innerHTML =
-                    '<div style="display:flex;gap:8px;margin-bottom:8px;">' +
-                    '<button id="ed-gen-btn-generado" onclick="_edGenSubtipo(\'generado\')" style="flex:1;padding:8px 4px;border-radius:10px;border:2px solid '+(esConv?'#d1d5db':'#f472b6')+';background:'+(esConv?'var(--surface2)':'#f472b6')+';color:'+(esConv?'#6b7280':'white')+';font-weight:800;font-size:0.8rem;cursor:pointer;">✨ Generado</button>' +
-                    '<button id="ed-gen-btn-convenio" onclick="_edGenSubtipo(\'convenio\')" style="flex:1;padding:8px 4px;border-radius:10px;border:2px solid '+(esConv?'#f59e0b':'#d1d5db')+';background:'+(esConv?'#f59e0b':'var(--surface2)')+';color:'+(esConv?'white':'#6b7280')+';font-weight:800;font-size:0.8rem;cursor:pointer;">📋 Convenio</button>' +
-                    '</div>' +
-                    '<input type="hidden" id="ed-subtipo" value="'+(h.subtipo||'generado')+'">' +
                     '<input id="ed-fecha" type="text" value="'+(h.fecha||'')+'" placeholder="Fecha" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;background:var(--surface);color:var(--text);box-sizing:border-box;margin-bottom:8px;">' +
-                    '<select id="ed-tipo" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;background:var(--surface);color:var(--text);box-sizing:border-box;margin-bottom:8px;'+(esConv?'display:none;':'')+'"><option value="libre"'+(h.esLibre?' selected':'')+'>\u25fb Libre</option><option value="trabajo"'+(!h.esLibre?' selected':'')+'>\u26aa Trabajo</option></select>' +
+                    '<select id="ed-tipo" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;background:var(--surface);color:var(--text);box-sizing:border-box;margin-bottom:8px;"><option value="libre"'+(h.esLibre?' selected':'')+'>\u25fb Libre</option><option value="trabajo"'+(!h.esLibre?' selected':'')+'>\u26aa Trabajo</option></select>' +
                     '<textarea id="ed-nota" rows="2" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;background:var(--surface);color:var(--text);resize:none;box-sizing:border-box;">'+(h.nota||'')+'</textarea>';
             } else if (cat==='pendiente') {
                 body.innerHTML =
@@ -3718,30 +3018,13 @@
         });
     }
 
-    window._edGenSubtipo = function(sub) {
-        document.getElementById('ed-subtipo').value = sub;
-        var btnGen = document.getElementById('ed-gen-btn-generado');
-        var btnCon = document.getElementById('ed-gen-btn-convenio');
-        var selTipo = document.getElementById('ed-tipo');
-        if (sub === 'generado') {
-            btnGen.style.background='#f472b6'; btnGen.style.borderColor='#f472b6'; btnGen.style.color='white';
-            btnCon.style.background='var(--surface2)'; btnCon.style.borderColor='#d1d5db'; btnCon.style.color='#6b7280';
-            selTipo.style.display='block';
-        } else {
-            btnCon.style.background='#f59e0b'; btnCon.style.borderColor='#f59e0b'; btnCon.style.color='white';
-            btnGen.style.background='var(--surface2)'; btnGen.style.borderColor='#d1d5db'; btnGen.style.color='#6b7280';
-            selTipo.style.display='none';
-        }
-    };
-
     function hmGuardarEdicion() {
         var cat = document.getElementById('hm-edit-cat').value;
         var key = _hmEditKey;
         var upd = {};
         if (cat==='generado') {
             upd.fecha = document.getElementById('ed-fecha').value.trim();
-            upd.subtipo = (document.getElementById('ed-subtipo')||{value:'generado'}).value || 'generado';
-            if (upd.subtipo === 'generado') upd.esLibre = document.getElementById('ed-tipo').value === 'libre';
+            upd.esLibre = document.getElementById('ed-tipo').value === 'libre';
             upd.nota = document.getElementById('ed-nota').value.trim();
         } else if (cat==='pendiente') {
             upd.fecha = document.getElementById('ed-fecha').value.trim();
@@ -3773,11 +3056,11 @@
     }
 
     function hmResolver(accion) {
+        // Solo librar — activar pick en calendario
         var key = _hmPendKey;
         db.ref('historial2/' + miID + '/' + key).once('value').then(function(snap) {
             var h = snap.val() || {};
-            var modo = (h.cat === 'generado' && h.subtipo === 'convenio') ? 'convenio' : 'pendiente';
-            _activarPickDia(modo, key, h.fecha || '');
+            _activarPickDia('pendiente', key, h.fecha || '');
         });
     }
 
@@ -3840,8 +3123,6 @@
         _hmAbierto = false;
         document.getElementById('historial-modal').style.display = 'none';
         _hmCat=null; _hmPendKey=null; _hmEditKey=null; _hmNav=[];
-        document.body.style.overflow = '';
-        document.body.style.touchAction = '';
     }
 
     function reproducirSonido() {
@@ -3889,7 +3170,7 @@
         for (let i = 0; i < 12; i++) {
             diasLibresPorMes.push(tablaGrupo[i] || []);
         }
-        const festivos2026 = ['0_1','0_6','3_2','3_3','4_1','4_2','4_15','7_15','9_12','10_2','10_9','11_7','11_8','11_25'];
+        const festivos2026 = ['0_1','0_6','3_2','3_9','4_1','4_15','7_15','9_12','10_1','10_9','11_6','11_8','11_25'];
         const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
         let totalLibres = 0, finesLibres = 0, festivosLibres = 0, htmlMeses = '';
 
@@ -4069,8 +3350,8 @@
     </div>
 </div>
 
-<div id="historial-modal" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.85); z-index:6000; align-items:flex-start; justify-content:center; padding:20px; overflow:hidden; overscroll-behavior:contain;">
-    <div style="background:var(--surface); width:100%; max-width:480px; max-height:calc(100vh - 40px); overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; border-radius:20px; padding:20px; margin-top:10px;">
+<div id="historial-modal" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.85); z-index:6000; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto;">
+    <div style="background:var(--surface); width:100%; max-width:480px; border-radius:20px; padding:20px; margin-top:10px;">
 
         <!-- PORTADA 4 tarjetas -->
         <div id="hm-portada">
@@ -4084,9 +3365,6 @@
                     <div style="font-weight:800; color:#be185d;">Generado</div>
                     <div style="font-size:0.72rem; color:#be185d; opacity:0.7; margin-top:3px;">Días asignados</div>
                     <div id="badge-generado" style="display:none; position:absolute; top:8px; right:10px; background:var(--pink); color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
-                    <div id="badge-convenio" style="display:none; position:absolute; top:8px; left:10px; background:#f59e0b; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
-                    <div id="badge-festivo" style="display:none; position:absolute; bottom:8px; right:10px; background:#3b82f6; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
-                    <div id="badge-l26" style="display:none; position:absolute; bottom:8px; left:10px; background:#f97316; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                 </div>
                 <div onclick="abrirCategoria('pendiente')" style="border:2px solid var(--primary); background:#f5f3ff; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
                     <div style="font-size:1.8rem; margin-bottom:6px;">⏳</div>
@@ -4106,12 +3384,6 @@
                     <div style="font-size:0.72rem; color:var(--danger); opacity:0.7; margin-top:3px;">Tus permutas</div>
                     <div id="badge-propio" style="display:none; position:absolute; top:8px; right:10px; background:var(--danger); color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                 </div>
-                <div onclick="abrirCategoria('notas')" style="border:2px solid #06b6d4; background:#ecfeff; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
-                    <div style="font-size:1.8rem; margin-bottom:6px;">📝</div>
-                    <div style="font-weight:800; color:#0e7490;">Mis Notas</div>
-                    <div style="font-size:0.72rem; color:#0e7490; opacity:0.7; margin-top:3px;">Anotaciones</div>
-                    <div id="badge-notas" style="display:none; position:absolute; top:8px; right:10px; background:#06b6d4; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
-                </div>
             </div>
             <button onclick="cerrarHistorial()" style="width:100%; padding:12px; background:#f5f3ff; border:none; border-radius:12px; font-weight:bold; color:var(--primary-dark);">Cerrar</button>
         </div>
@@ -4123,16 +3395,11 @@
                     <button onclick="hmVolverPortada()" style="background:#f5f3ff; color:var(--primary-dark); border:none; border-radius:8px; padding:7px 12px; font-weight:800;">← Atrás</button>
                     <span id="hm-titulo" style="font-weight:800; color:var(--primary-dark); font-size:0.95rem;"></span>
                 </div>
-                <button id="hm-btn-add" onclick="hmMostrarForm()" style="background:var(--primary); color:white; border:none; border-radius:8px; padding:7px 13px; font-weight:700;">➕</button>
+                <button onclick="hmMostrarForm()" style="background:var(--primary); color:white; border:none; border-radius:8px; padding:7px 13px; font-weight:700;">➕</button>
             </div>
             <div id="hm-form-wrap" style="display:none; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px;">
                 <div id="hm-form-generado" style="display:none;">
                     <div style="font-weight:700; color:#be185d; margin-bottom:8px; font-size:0.85rem;">✨ Día generado</div>
-                    <div style="display:flex; gap:8px; margin-bottom:8px;">
-                        <button id="fa-gen-btn-generado" onclick="_faGenSubtipo('generado')" style="flex:1; padding:9px 6px; border-radius:10px; border:2px solid #f472b6; background:#f472b6; color:white; font-weight:800; font-size:0.82rem; cursor:pointer;">✨ Generado</button>
-                        <button id="fa-gen-btn-convenio" onclick="_faGenSubtipo('convenio')" style="flex:1; padding:9px 6px; border-radius:10px; border:2px solid #d1d5db; background:var(--surface2); color:#6b7280; font-weight:800; font-size:0.82rem; cursor:pointer;">📋 Convenio</button>
-                    </div>
-                    <input type="hidden" id="fa-gen-subtipo" value="generado">
                     <input id="fa-gen-fecha" type="text" placeholder="Fecha (ej: 15/3/2025)" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:8px; font-size:0.85rem; background:var(--surface); color:var(--text); box-sizing:border-box; margin-bottom:8px;">
                     <select id="fa-gen-tipo" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:8px; font-size:0.85rem; background:var(--surface); color:var(--text); box-sizing:border-box; margin-bottom:8px;">
                         <option value="libre">⬜ Libre</option>
@@ -4167,7 +3434,7 @@
                     <button onclick="document.getElementById('hm-form-wrap').style.display='none'" style="flex:1; background:#f5f3ff; color:var(--primary-dark); border:none; border-radius:8px; padding:8px; font-weight:700;">Cancelar</button>
                 </div>
             </div>
-            <div id="hm-items" style="max-height:55vh; overflow-y:auto; overscroll-behavior:contain; overscroll-behavior-y:contain; -webkit-overflow-scrolling:touch;"></div>
+            <div id="hm-items" style="max-height:55vh; overflow-y:auto;"></div>
         </div>
 
         <!-- EDITAR ENTRADA -->
@@ -4220,7 +3487,6 @@ const _modalCierres = [
     { id: 'confirm-modal',    fn: () => document.getElementById('confirm-modal').style.display = 'none' },
     { id: 'pending-modal',    fn: () => document.getElementById('pending-modal').style.display = 'none' },
     { id: 'vac-modal',        fn: () => { if(typeof cerrarVacModal==='function') cerrarVacModal(); else document.getElementById('vac-modal').style.display='none'; } },
-    { id: 'nota-modal',       fn: () => { if(typeof cerrarNotaModal==='function') cerrarNotaModal(); else document.getElementById('nota-modal').style.display='none'; } },
     { id: 'report-modal',     fn: () => document.getElementById('report-modal').style.display = 'none' },
     { id: 'dia-modal',        fn: () => document.getElementById('dia-modal').style.display = 'none' },
     { id: 'side-panel',       fn: () => document.getElementById('side-panel').style.display = 'none' },
@@ -4265,8 +3531,6 @@ function _cerrarModalVisible() {
 function _onModalOpen() {
     _modalCount++;
     history.pushState({ modal: _modalCount }, '');
-    document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
 }
 
 // Entrada base para no salir de la app cuando no hay modales
@@ -4284,8 +3548,6 @@ window.addEventListener('popstate', function(e) {
             document.getElementById('historial-modal').style.display = 'none';
             _hmCat = null; _hmPendKey = null; _hmEditKey = null; _hmNav = [];
             if (_modalCount > 0) _modalCount--;
-            document.body.style.overflow = '';
-            document.body.style.touchAction = '';
         }
         return;
     }
@@ -4297,43 +3559,13 @@ window.addEventListener('popstate', function(e) {
         if (!hayModales) {
             _modalCount = 0;
             history.pushState({ base: true }, '');
-            document.body.style.overflow = '';
-            document.body.style.touchAction = '';
         } else if (_modalCount === 0) {
             history.pushState({ base: true }, '');
         }
     } else {
         history.pushState({ base: true }, '');
-        document.body.style.overflow = '';
-        document.body.style.touchAction = '';
     }
 });
-
-// Bloqueo del gesto "pull to refresh" nativo de Chrome/TWA.
-// Chrome solo respeta el bloqueo si se hace en touchstart con passive:false,
-// comprobando que el scroll ya está en scrollTop=0 ANTES de que empiece el gesto.
-(function() {
-    document.addEventListener('touchstart', function(e) {
-        if (e.target.closest('#ctx-menu')) return; // no tocar el menú de arrastre
-
-        // Encontrar el contenedor con scroll bajo el dedo (o usar documentElement/body)
-        var el = e.target;
-        var contenedorScroll = document.scrollingElement || document.documentElement;
-        while (el && el !== document.body) {
-            var style = window.getComputedStyle(el);
-            if ((style.overflowY === 'auto' || style.overflowY === 'scroll') && el.scrollHeight > el.clientHeight) {
-                contenedorScroll = el;
-                break;
-            }
-            el = el.parentElement;
-        }
-
-        // Si ya estamos en el tope superior del contenedor relevante, neutralizar el pull-to-refresh
-        if (contenedorScroll.scrollTop <= 0) {
-            contenedorScroll.scrollTop = 1; // truco: empuja 1px para que Chrome no detecte "scrollTop=0"
-        }
-    }, { passive: true });
-})();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
@@ -4412,17 +3644,5 @@ if ('serviceWorker' in navigator) {
     </div>
 </div>
 
-
-    <script>
-    // Poner año actual en títulos
-    (function(){
-        var y = new Date().getFullYear();
-        document.title = 'Planificación ' + y;
-        var t = document.getElementById('anio-titulo');
-        var s = document.getElementById('anio-splash');
-        if(t) t.textContent = y;
-        if(s) s.textContent = y;
-    })();
-    </script>
 </body>
 </html>
