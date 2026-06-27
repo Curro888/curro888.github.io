@@ -1407,8 +1407,10 @@
             }
         });
         
-        // Prevenir que el menú se reabra
+        // Prevenir que se ejecute handleDayClick
         ignorarSiguienteClick = true;
+        pressTimerActive = true;
+        setTimeout(function() { pressTimerActive = false; }, 100);
         modoSeleccionActivo = false;
     }
 
