@@ -1173,14 +1173,15 @@
             }).then(function() {
                 db.ref('historial2/' + miID + '/' + _pickGenKey).update({
                     resuelto: { accion: 'librar', diaLibre: fecha }
+                }).then(function() {
+                    _desactivarPickDia();
+                    cerrarCalendario();
+                    setTimeout(function() {
+                        abrirHistorial();
+                        abrirCategoria('generado');
+                    }, 300);
                 });
             });
-            _desactivarPickDia();
-            cerrarCalendario();
-            setTimeout(function() {
-                abrirHistorial();
-                abrirCategoria('generado');
-            }, 300);
         } else if (_modoPickDia === 'convenio') {
             _confirmarPickConvenio(d, mIdx, fecha);
         } else if (_modoPickDia === 'pendiente') {
