@@ -1,8 +1,3 @@
-
-
-
-
- 
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -2600,10 +2595,8 @@
                     encontrado = true;
                     db.ref('historial2/' + miID + '/' + child.key + '/resuelto').remove().then(function() {
                         _hmBadges();
-                        // Recargar tarjeta si el historial está abierto
-                        if (document.getElementById('historial-modal').style.display !== 'none') {
-                            _hmCargar('generado');
-                        }
+                        // Recargar tarjeta siempre para que L-26 quede disponible
+                        _hmCargar('generado');
                     });
                 }
             });
