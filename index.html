@@ -2588,32 +2588,15 @@
     }
 
     function _hmQuitarResolucionL26(fechaLibre) {
-        // Normalizar formato fecha (quitar espacios, 0s iniciales)
-        var fNorm = String(fechaLibre).trim();
+        // Igual que _hmQuitarResolucionGenerado pero para l26
         db.ref('historial2/' + miID).once('value').then(function(snap) {
-            var promesas = [];
             snap.forEach(function(child) {
                 var h = child.val();
-                if (h && h.cat === 'l26' && h.resuelto) {
-                    var dL = String(h.resuelto.diaLibre || '').trim();
-                    // Comparar directamente y también normalizado
-                    if (dL === fNorm) {
-                        promesas.push(
-                            db.ref('historial2/' + miID + '/' + child.key + '/resuelto').remove()
-                        );
-                    }
+                if (h && h.cat === 'l26' && h.resuelto &&
+                    h.resuelto.diaLibre === fechaLibre) {
+                    db.ref('historial2/' + miID + '/' + child.key + '/resuelto').set(null);
                 }
             });
-            if (promesas.length > 0) {
-                Promise.all(promesas).then(function() {
-                    _hmBadges();
-                    _hmCargar('generado');
-                });
-            } else {
-                // No encontrado por diaLibre, intentar por texto del cambio en cambios/
-                _hmBadges();
-                _hmCargar('generado');
-            }
         });
     }
 
