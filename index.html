@@ -3314,7 +3314,7 @@
 
     function _hmBadges() {
         db.ref('historial2/' + miID).once('value').then(function(snap) {
-            var c = { generado:0, convenio:0, festivo:0, pendiente:0, comp:0, propio:0 };
+            var c = { generado:0, l26:0, convenio:0, festivo:0, pendiente:0, comp:0, propio:0 };
             Object.values(snap.val() || {}).forEach(function(h) {
                 if (h.cat === 'generado') {
                     if (!h.resuelto && !h.cobrado) {
@@ -3325,7 +3325,7 @@
                     return;
                 }
                 if (h.cat === 'l26') {
-                    if (!h.resuelto && !h.cobrado) c.generado++;
+                    if (!h.resuelto && !h.cobrado) c.l26++;
                     return;
                 }
                 if (h.cat === 'pendiente') {
@@ -3344,6 +3344,8 @@
             if (bc) { bc.style.display = c.convenio > 0 ? 'block' : 'none'; bc.textContent = c.convenio; }
             var bf = document.getElementById('badge-festivo');
             if (bf) { bf.style.display = c.festivo > 0 ? 'block' : 'none'; bf.textContent = c.festivo; }
+            var bl = document.getElementById('badge-l26');
+            if (bl) { bl.style.display = c.l26 > 0 ? 'block' : 'none'; bl.textContent = c.l26; }
         });
         db.ref('cambios/' + miID).once('value').then(function(snapSR) {
             var sr = 0;
@@ -4090,6 +4092,7 @@
                     <div id="badge-generado" style="display:none; position:absolute; top:8px; right:10px; background:var(--pink); color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                     <div id="badge-convenio" style="display:none; position:absolute; top:8px; left:10px; background:#f59e0b; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                     <div id="badge-festivo" style="display:none; position:absolute; bottom:8px; right:10px; background:#3b82f6; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
+                    <div id="badge-l26" style="display:none; position:absolute; bottom:8px; left:10px; background:#ea580c; color:white; border-radius:20px; padding:1px 7px; font-size:0.7rem; font-weight:800;"></div>
                 </div>
                 <div onclick="abrirCategoria('pendiente')" style="border:2px solid var(--primary); background:#f5f3ff; border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center; position:relative; -webkit-tap-highlight-color:transparent;">
                     <div style="font-size:1.8rem; margin-bottom:6px;">⏳</div>
