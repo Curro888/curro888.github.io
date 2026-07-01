@@ -1317,7 +1317,10 @@
     }
 
     // Desde la tarjeta: decidir que hacer con un dia generado
+    var _decisionTipo = 'generado'; // 'generado' | 'l26' — controla a qué handler despacha el modal compartido
+
     function _abrirDecisionGenerado(key, fecha) {
+        _decisionTipo = 'generado';
         document.getElementById('mgen-fecha').textContent = '✨ Dia generado: ' + fecha;
         document.getElementById('mgen-key').value = key;
         document.getElementById('mgen-fecha-val').value = fecha;
@@ -1328,6 +1331,12 @@
         if (lista) lista.innerHTML = '';
         document.getElementById('modal-generado-decision').style.display = 'flex';
         _onModalOpen();
+    }
+
+    function _elegirDecision(opcion) {
+        // Dispatcher único de los botones del modal compartido
+        if (_decisionTipo === 'l26') _elegirL26(opcion);
+        else _elegirGenerado(opcion);
     }
 
     function _elegirGenerado(opcion) {
@@ -1366,6 +1375,7 @@
     }
 
     function _abrirDecisionL26(key, fecha) {
+        _decisionTipo = 'l26';
         document.getElementById('mgen-fecha').textContent = '🟧 L-26: ' + fecha;
         document.getElementById('mgen-key').value = key;
         document.getElementById('mgen-fecha-val').value = fecha;
@@ -4366,8 +4376,8 @@ if ('serviceWorker' in navigator) {
         <input type="hidden" id="mgen-fecha-val">
         <p style="font-size:0.88rem; color:var(--text); margin:0 0 14px 0; font-weight:600; text-align:center;">¿Qué quieres hacer con este dia?</p>
         <div style="display:flex; gap:10px; margin-bottom:12px;">
-            <button onclick="_elegirGenerado('librar')" style="flex:1; padding:14px 8px; background:#fdf2f8; border:2px solid var(--pink); border-radius:14px; font-weight:800; color:#be185d; cursor:pointer; line-height:1.5;">⬜ Librar<br><span style="font-size:0.72rem; font-weight:500;">Marcar en calendario</span></button>
-            <button onclick="_elegirGenerado('cobrar')" style="flex:1; padding:14px 8px; background:#f0fdf4; border:2px solid var(--success); border-radius:14px; font-weight:800; color:#166534; cursor:pointer; line-height:1.5;">💰 Cobrar<br><span style="font-size:0.72rem; font-weight:500;">Solicitar cobro</span></button>
+            <button onclick="_elegirDecision('librar')" style="flex:1; padding:14px 8px; background:#fdf2f8; border:2px solid var(--pink); border-radius:14px; font-weight:800; color:#be185d; cursor:pointer; line-height:1.5;">⬜ Librar<br><span style="font-size:0.72rem; font-weight:500;">Marcar en calendario</span></button>
+            <button onclick="_elegirDecision('cobrar')" style="flex:1; padding:14px 8px; background:#f0fdf4; border:2px solid var(--success); border-radius:14px; font-weight:800; color:#166534; cursor:pointer; line-height:1.5;">💰 Cobrar<br><span style="font-size:0.72rem; font-weight:500;">Solicitar cobro</span></button>
         </div>
         <button onclick="document.getElementById('modal-generado-decision').style.display='none';" style="width:100%; padding:10px; background:#f5f3ff; border:none; border-radius:10px; color:var(--primary-dark); font-weight:700;">Cancelar</button>
     </div>
