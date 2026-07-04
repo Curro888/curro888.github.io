@@ -2377,6 +2377,7 @@
 
     function rechazarCambio() {
         document.getElementById('confirm-modal').style.display = 'none';
+        _onModalClose();
         modoSeleccionActivo = false;
         document.getElementById('selection-notice').style.display = 'none';
         window._pendingCambio = null;
@@ -2384,6 +2385,7 @@
 
     function confirmarCambioComp() {
         document.getElementById('confirm-modal').style.display = 'none';
+        _onModalClose();
         const { d1, m1, d2, m2, uid2 } = window._pendingCambio;
         const miNom = equipo.find(x => x.id === miID)?.n.split(" ")[0] || miID;
         const compNom = equipo.find(x => x.id === uid2)?.n.split(" ")[0] || uid2;
@@ -2420,12 +2422,14 @@
             if (sol.estado === 'aceptada') {
                 ref.off();
                 document.getElementById('pending-modal').style.display = 'none';
+                _onModalClose();
                 pendingSolicitudKey = null;
                 alert("✅ Cambio confirmado por " + (equipo.find(x=>x.id===uid2)?.n || uid2) + ". ¡Ya está aplicado!");
                 db.ref(`solicitudes/${solKey}`).remove();
             } else if (sol.estado === 'rechazada') {
                 ref.off();
                 document.getElementById('pending-modal').style.display = 'none';
+                _onModalClose();
                 pendingSolicitudKey = null;
                 alert("❌ El compañero rechazó el cambio.");
                 db.ref(`solicitudes/${solKey}`).remove();
@@ -2439,6 +2443,7 @@
             pendingSolicitudKey = null;
         }
         document.getElementById('pending-modal').style.display = 'none';
+        _onModalClose();
     }
 
     // ===== ESCUCHAR SOLICITUDES ENTRANTES =====
@@ -4289,6 +4294,16 @@ function _onModalOpen() {
     history.pushState({ modal: _modalCount }, '');
     document.body.style.overflow = 'hidden';
     document.body.style.touchAction = 'none';
+}
+
+// Llamar al cerrar un modal "a mano" (sin pasar por el botón atrás), para que el scroll
+// se recupere correctamente. Fix: scroll bloqueado tras cambio con compañero.
+function _onModalClose() {
+    if (_modalCount > 0) _modalCount--;
+    if (_modalCount === 0) {
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
+    }
 }
 
 // Entrada base para no salir de la app cuando no hay modales
