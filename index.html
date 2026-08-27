@@ -3073,20 +3073,36 @@ function _generarManual() {
     var _hmNav = []; // pila de navegación: 'portada' | 'detalle' | 'resolver' | 'editar'
 
     // Helpers globales para onclick en HTML dinámico
-   window._hmDel = function(btn) {
+  window._hmDel = function(btn) {
     var path = btn.dataset.path;
     if (!confirm('¿Borrar esta entrada?')) return;
     db.ref(path).once('value').then(function(snap) {
         var h = snap.val();
         var updates = {};
         updates[path] = null;
-        // Si es un día generado que aún no se ha usado, borramos también su marca en el calendario
-        if (h && h.cat === 'generado' && !h.resuelto && h.fecha) {
-            var partes = h.fecha.split('/');
-            if (partes.length >= 2) {
-                var dd = parseInt(partes[0]), mm = parseInt(partes[1]) - 1;
-                if (!isNaN(dd) && !isNaN(mm)) {
-                    updates['cambios/' + miID + '/' + mm + '_' + dd] = null;
+
+        function clave(fechaTxt) {
+            var p = fechaTxt.split('/');
+            if (p.length < 2) return null;
+            var dd = parseInt(p[0]), mm = parseInt(p[1]) - 1;
+            if (isNaN(dd) || isNaN(mm)) return null;
+            return mm + '_' + dd;
+        }
+
+        if (h && h.cat === 'generado') {
+            if (!h.resuelto && h.fecha) {
+                // Aún sin usar: borrar la marca del día donde se generó
+                var k1 = clave(h.fecha);
+                if (k1) updates['cambios/' + miID + '/' + k1] = null;
+            } else if (h.resuelto) {
+                // Ya usado: borrar tanto el día original como el día que se libró con él
+                if (h.fecha) {
+                    var k2 = clave(h.fecha);
+                    if (k2) updates['cambios/' + miID + '/' + k2] = null;
+                }
+                if (h.resuelto.diaLibre) {
+                    var k3 = clave(h.resuelto.diaLibre);
+                    if (k3) updates['cambios/' + miID + '/' + k3] = null;
                 }
             }
         }
