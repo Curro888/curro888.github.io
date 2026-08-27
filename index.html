@@ -1247,6 +1247,36 @@
         }, 300);
     }
     var _genDia = null, _genMes = null;
+    function _decidirGeneradoOManual() {
+    cerrarDesplegables();
+    document.getElementById('modal-generado-decidir').style.display = 'flex';
+    _onModalOpen();
+}
+
+function _cerrarDecidirGenerado() {
+    document.getElementById('modal-generado-decidir').style.display = 'none';
+    _onModalClose();
+}
+
+function _generarManual() {
+    var d = diaSeleccionado.d, mIdx = diaSeleccionado.mIdx;
+    var fecha = d + '/' + (mIdx+1);
+    var nota = prompt('Motivo del día generado (opcional):', '');
+    if (nota === null) return;
+    var key = String(Date.now());
+    db.ref('historial2/' + miID + '/' + key).set({
+        cat: 'generado',
+        subtipo: 'manual',
+        ts: Date.now(),
+        fecha: fecha,
+        nota: nota.trim() || 'Generado manual',
+        esLibre: false
+    });
+    db.ref('cambios/' + miID + '/' + mIdx + '_' + d).set({
+        texto: nota.trim() || 'Generado',
+        clase: 'b-generado'
+    }).then(function() { _hmBadges(); });
+}
 
     function _abrirModalGenerado() {
         // El dia seleccionado es el dia LIBRE que voy a usar con un generado
@@ -2250,7 +2280,7 @@
         Array.from(menu.children).forEach(c => { if (c !== handle) c.remove(); });
 
         const accionesMenu = {
-            'generado': () => _abrirModalGenerado(),
+            'generado': () => _decidirGeneradoOManual(),
             'l26': () => _crearL26(),
             'pendiente': () => _abrirModalPendiente(),
             'vacaciones': () => abrirVacModal(),
@@ -4096,6 +4126,17 @@ if ('serviceWorker' in navigator) {
 <!-- Modal: cambio propio trabaja/libra -->
 <!-- Modal: generado cobrar/librar -->
 <!-- Modal: decision generado (cobrar/librar desde tarjeta) -->
+<div id="modal-generado-decidir" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.75); z-index:7000; align-items:center; justify-content:center; padding:20px;">
+    <div style="background:var(--surface); padding:24px; border-radius:20px; width:100%; max-width:320px; border:1px solid var(--pink);">
+        <h3 style="margin:0 0 6px 0; color:#be185d; text-align:center;">✨ Día generado</h3>
+        <p style="font-size:0.88rem; color:var(--text); margin:0 0 14px 0; font-weight:600; text-align:center;">¿Qué quieres hacer?</p>
+        <div style="display:flex; gap:10px; margin-bottom:12px;">
+            <button onclick="_cerrarDecidirGenerado(); _generarManual();" style="flex:1; padding:14px 8px; background:#fdf2f8; border:2px solid var(--pink); border-radius:14px; font-weight:800; color:#be185d; cursor:pointer; line-height:1.5;">🆕 Generar<br><span style="font-size:0.72rem; font-weight:500;">Crear uno nuevo</span></button>
+            <button onclick="_cerrarDecidirGenerado(); _abrirModalGenerado();" style="flex:1; padding:14px 8px; background:#f0fdf4; border:2px solid var(--success); border-radius:14px; font-weight:800; color:#166534; cursor:pointer; line-height:1.5;">♻️ Usar<br><span style="font-size:0.72rem; font-weight:500;">Gastar uno guardado</span></button>
+        </div>
+        <button onclick="_cerrarDecidirGenerado();" style="width:100%; padding:10px; background:#f5f3ff; border:none; border-radius:10px; color:var(--primary-dark); font-weight:700;">Cancelar</button>
+    </div>
+</div>
 <div id="modal-generado-decision" style="display:none; position:fixed; inset:0; background:rgba(30,27,75,0.75); z-index:7000; align-items:center; justify-content:center; padding:20px;">
     <div style="background:var(--surface); padding:24px; border-radius:20px; width:100%; max-width:320px; border:1px solid var(--pink);">
         <h3 style="margin:0 0 6px 0; color:#be185d; text-align:center;">✨ Dia generado</h3>
