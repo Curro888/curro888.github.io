@@ -3073,11 +3073,26 @@ function _generarManual() {
     var _hmNav = []; // pila de navegación: 'portada' | 'detalle' | 'resolver' | 'editar'
 
     // Helpers globales para onclick en HTML dinámico
-    window._hmDel = function(btn) {
-        var path = btn.dataset.path;
-        if (!confirm('\u00bfBorrar esta entrada?')) return;
-        db.ref(path).remove().then(function() { _hmCargar(_hmCat); });
-    };
+   window._hmDel = function(btn) {
+    var path = btn.dataset.path;
+    if (!confirm('¿Borrar esta entrada?')) return;
+    db.ref(path).once('value').then(function(snap) {
+        var h = snap.val();
+        var updates = {};
+        updates[path] = null;
+        // Si es un día generado que aún no se ha usado, borramos también su marca en el calendario
+        if (h && h.cat === 'generado' && !h.resuelto && h.fecha) {
+            var partes = h.fecha.split('/');
+            if (partes.length >= 2) {
+                var dd = parseInt(partes[0]), mm = parseInt(partes[1]) - 1;
+                if (!isNaN(dd) && !isNaN(mm)) {
+                    updates['cambios/' + miID + '/' + mm + '_' + dd] = null;
+                }
+            }
+        }
+        db.ref().update(updates).then(function() { _hmCargar(_hmCat); });
+    });
+};
     window._hmRes = function(btn) {
         hmAbrirResolver(btn.dataset.key, btn.dataset.fecha);
     };
