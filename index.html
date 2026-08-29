@@ -165,7 +165,17 @@
     #splash-screen { position:fixed; inset:0; background:var(--primary); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; animation:splashFade 2s ease forwards; pointer-events:none; }
     #splash-screen .splash-logo { font-size:4rem; animation:splashLogo 0.8s ease forwards; }
     #splash-screen .splash-title { color:white; font-size:1.5rem; font-weight:900; margin-top:16px; letter-spacing:0.05em; }
-    #splash-screen .splash-sub { color:rgba(255,255,255,0.7); font-size:0.85rem; margin-top:8px; }
+        #splash-screen .splash-sub { color:rgba(255,255,255,0.7); font-size:0.85rem; margin-top:8px; }
+
+    /* AVATAR */
+    .avatar-wrap { position: relative; width: 42px; height: 42px; flex-shrink: 0; margin-right: 10px; }
+    .avatar-circle { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; display: block; border: 2px solid rgba(255,255,255,0.7); background: var(--primary); }
+    .avatar-placeholder { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; font-weight: 800; font-size: 1rem; border: 2px solid rgba(255,255,255,0.7); }
+    .avatar-cam-btn { position: absolute; bottom: -3px; right: -3px; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; cursor: pointer; }
+    .avatar-wrap.avatar-editable { cursor: pointer; }
+    .avatar-wrap-sm { width: 34px; height: 34px; margin-right: 8px; }
+    .avatar-wrap-sm .avatar-circle, .avatar-wrap-sm .avatar-placeholder { width: 34px; height: 34px; font-size: 0.85rem; }
+
     </style>
 </head>
 <body ontouchmove="handleGlobalTouchMove(event)">
@@ -282,7 +292,10 @@
 <!-- ===== APP PRINCIPAL ===== -->
 <div id="main-content" style="display:none">
     <header style="padding:10px 15px;">
-        <span id="user-title" style="font-weight:800; color:var(--primary-dark); font-size:0.88rem; max-width:55vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:inline-block;"></span>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <div id="mi-avatar-header" class="avatar-wrap avatar-wrap-sm avatar-editable" onclick="subirFotoPerfil(miID)"></div>
+            <span id="user-title" style="font-weight:800; color:var(--primary-dark); font-size:0.88rem; max-width:45vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:inline-block;"></span>
+        </div>
         <div style="display:flex;gap:6px;align-items:center;">
             <button onclick="abrirPanelGrupos()" style="padding:8px 11px; border-radius:8px; border:1px solid #ddd6fe; background:var(--surface2); font-size:0.85rem; color:var(--primary);">📅</button>
             <div style="position:relative;">
@@ -291,7 +304,8 @@
                 </button>
                 <div id="dropdown-menu" style="display:none; position:absolute; right:0; top:calc(100% + 8px); background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:0 8px 30px rgba(139,92,246,0.18); z-index:9999; min-width:200px; overflow:hidden;">
                     <div id="dmenu-editar-grupo" style="display:none; padding:15px 18px; font-size:0.92rem; font-weight:700; color:var(--text); border-bottom:1px solid #f5f3ff; cursor:pointer; active-background:#f5f3ff;" ontouchend="this.click()" onclick="closeMenu();abrirEditorGrupo();">✏️ Editar grupo</div>
-                    <div id="dmenu-companeros" style="display:none; padding:15px 18px; font-size:0.92rem; font-weight:700; color:var(--text); border-bottom:1px solid #f5f3ff; cursor:pointer;" ontouchend="this.click()" onclick="closeMenu();abrirCompaneros();">👥 Compañeros</div>
+                                      <div id="dmenu-companeros" style="display:none; padding:15px 18px; font-size:0.92rem; font-weight:700; color:var(--text); border-bottom:1px solid #f5f3ff; cursor:pointer;" ontouchend="this.click()" onclick="closeMenu();abrirCompaneros();">👥 Compañeros</div>
+                    <div id="dmenu-foto" style="padding:15px 18px; font-size:0.92rem; font-weight:700; color:var(--text); border-bottom:1px solid #f5f3ff; cursor:pointer;" ontouchend="this.click()" onclick="closeMenu();subirFotoPerfil(miID);">🖼️ Cambiar mi foto</div> 
                     <div id="dmenu-stats" style="display:none; padding:15px 18px; font-size:0.92rem; font-weight:700; color:var(--text); border-bottom:1px solid #f5f3ff; cursor:pointer;" ontouchend="this.click()" onclick="closeMenu();abrirEstadisticas();">📊 Estadísticas</div>
                     <div id="dmenu-notif" style="padding:15px 18px; font-size:0.92rem; font-weight:700; color:var(--text); border-bottom:1px solid var(--border); cursor:pointer;" ontouchend="this.click()" onclick="closeMenu();activarNotificaciones();">🔔 Activar notificaciones</div>
                     <div id="dmenu-historial" style="display:none; padding:15px 18px; font-size:0.92rem; font-weight:700; color:var(--text); border-bottom:1px solid var(--border); cursor:pointer;" onclick="closeMenu();abrirHistorial();">📋 Mis cambios</div>
@@ -490,6 +504,7 @@
     <div id="ctx-menu-handle">⠿ MANTÉN Y ARRASTRA</div>
 </div>
 <div id="selection-notice"></div>
+<input type="file" id="foto-input-hidden" accept="image/*" style="display:none;">
 
 <script>
     // ===== FIREBASE =====
@@ -995,7 +1010,9 @@
             document.getElementById('dmenu-editar-grupo').style.display = 'none';
             document.getElementById('dmenu-stats').style.display = 'block';
         }
-        iniciarListeners();
+             iniciarListeners();
+        iniciarListenerFotos();
+        actualizarAvatarHeader();
         renderList();
         if (modoGrupo) { iniciarPresencia(); iniciarListenerNotas(miID); }
         _checkFestivos();
@@ -1113,7 +1130,80 @@
             }
         });
     }
+    // ===== FOTOS DE PERFIL =====
+    let dbFotos = {};
+    let listenerFotos = null;
 
+    function iniciarListenerFotos() {
+        if (listenerFotos) listenerFotos.off();
+        listenerFotos = db.ref('fotos');
+        listenerFotos.on('value', function(snap) {
+            dbFotos = snap.val() || {};
+            actualizarAvatarHeader();
+            if (typeof renderList === 'function') renderList();
+        });
+    }
+
+    function avatarHTML(uid, nombre, editable, sizeClass) {
+        const foto = dbFotos[uid];
+        const inicial = (nombre || '?').trim().charAt(0).toUpperCase();
+        const wrapClass = 'avatar-wrap' + (sizeClass ? ' ' + sizeClass : '') + (editable ? ' avatar-editable' : '');
+        const onclickAttr = editable ? ' onclick="subirFotoPerfil(\'' + uid + '\')"' : '';
+        const inner = foto
+            ? '<img class="avatar-circle" src="' + foto + '">'
+            : '<div class="avatar-placeholder">' + inicial + '</div>';
+        const camBtn = editable ? '<div class="avatar-cam-btn">📷</div>' : '';
+        return '<div class="' + wrapClass + '"' + onclickAttr + '>' + inner + camBtn + '</div>';
+    }
+
+    function actualizarAvatarHeader() {
+        const cont = document.getElementById('mi-avatar-header');
+        if (!cont || !miID) return;
+        const foto = dbFotos[miID];
+        const inicial = (miNombreCompleto || '?').trim().charAt(0).toUpperCase();
+        cont.innerHTML = foto
+            ? '<img class="avatar-circle" src="' + foto + '"><div class="avatar-cam-btn">📷</div>'
+            : '<div class="avatar-placeholder">' + inicial + '</div><div class="avatar-cam-btn">📷</div>';
+    }
+
+    function subirFotoPerfil(uid) {
+        if (!uid) return;
+        const input = document.getElementById('foto-input-hidden');
+        input.onchange = function() {
+            const file = input.files && input.files[0];
+            input.value = '';
+            if (!file) return;
+            comprimirYSubirFoto(file, uid);
+        };
+        input.click();
+    }
+
+    function comprimirYSubirFoto(file, uid) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const maxSize = 160;
+                let w = img.width, h = img.height;
+                if (w > h) { if (w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; } }
+                else { if (h > maxSize) { w = Math.round(w * maxSize / h); h = maxSize; } }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                db.ref('fotos/' + uid).set(dataUrl).then(function() {
+                    dbFotos[uid] = dataUrl;
+                    actualizarAvatarHeader();
+                    if (typeof renderList === 'function') renderList();
+                }).catch(function(err) {
+                    alert('No se pudo guardar la foto: ' + err.message);
+                });
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
     function toggleMenu() {
         const m = document.getElementById('dropdown-menu');
         m.style.display = m.style.display === 'none' ? 'block' : 'none';
@@ -1831,7 +1921,7 @@ function _generarManual() {
         const { esLibreReal } = checkEstadoIndividual(p.g, p.t, mHoy, dHoy);
         let html = `
         <div class="user-card ${esLibreReal ? 'card-libra' : 'card-trabaja'}" style="margin-bottom:16px;">
-            <div><span class="name-big">${p.n}</span></div>
+                     <div style="display:flex; align-items:center;">${avatarHTML(p.id, p.n, true)}<span class="name-big">${p.n}</span></div>  
             <div style="display:flex; align-items:center;">
                 <div class="info-tag">🌙N · G${p.g} · ${p.t}</div>
                 <button class="btn-main" onclick="abrirCal('${p.id}')">Calendario</button>
@@ -1923,8 +2013,10 @@ function _generarManual() {
             const esNoche = (m.t === '73/27' || m.t === '80/20');
             const grupoOpts = Array.from({length:15},(_,i)=>i+1).map(n=>`<option value="${n}" ${m.g==n?'selected':''}>${n}</option>`).join('');
             cont.innerHTML += `
-            <div class="member-row" id="mrow-${m.id}" style="flex-direction:column; align-items:stretch; gap:8px;">
+                        <div class="member-row" id="mrow-${m.id}" style="flex-direction:column; align-items:stretch; gap:8px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center;">
+                        ${avatarHTML(m.id, m.n, true, 'avatar-wrap-sm')}
                     <div>
                         <div class="member-name">${m.n} <span style="color:#94a3b8; font-weight:500">#${m.id}</span></div>
                         <div class="member-sub">Grupo ${m.g} · ${esNoche ? '🌙N · ' : ''}${m.t}</div>
@@ -2077,7 +2169,7 @@ function _generarManual() {
             const puntito = conectado ? `<span style="display:inline-block; width:9px; height:9px; background:#22c55e; border-radius:50%; margin-left:6px; box-shadow:0 0 4px #22c55e;" title="En línea"></span>` : '';
             cont.innerHTML += `
             <div class="user-card ${esLibreReal ? 'card-libra' : 'card-trabaja'}">
-                <div style="display:flex; align-items:center;"><span class="name-big">${e.n}</span><span class="id-black">${e.id}</span>${puntito}</div>
+                <div style="display:flex; align-items:center;">${avatarHTML(e.id, e.n, e.id === miID)}<span class="name-big">${e.n}</span><span class="id-black">${e.id}</span>${puntito}</div>
                 <div style="display:flex; align-items:center;">
                     <div class="info-tag">${tagLabel}</div>
                     <button class="btn-main" onclick="abrirCal('${e.id}')">Calendario</button>
